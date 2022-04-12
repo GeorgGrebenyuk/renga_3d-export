@@ -1,4 +1,8 @@
 #include "actions.h"
+
+actions::actions(_bstr_t project_file_path) {
+	this->current_project_file_path = project_file_path;
+}
 int actions::start() {
 	// Initialise low-level API first. 
 	LiNwcApiErrorInitialise();
@@ -20,11 +24,11 @@ int actions::start() {
 	return 0;
 }
 void actions::test_process() {
-	std::string dir_path = "E:\\Temp\\";
+	//std::string dir_path = "E:\\Temp\\";
 	GUID uniq_id;
 	CoCreateGuid(&uniq_id);
 	std::string  uniq_id2 = std::to_string(uniq_id.Data1);
-	std::string all_temp_path = dir_path + uniq_id2 + ".nwc";
+	std::string all_temp_path = this->current_project_file_path + uniq_id2 + ".nwc";
 	std::wstring all_temp_path_w(std::begin(all_temp_path), std::end(all_temp_path));
 	LtWideString wfilename = all_temp_path_w.c_str();
 
