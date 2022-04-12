@@ -1,4 +1,5 @@
 #include "plugin_start.h"
+#include "actions.h"
 
 bool renga2nwc::initialize(const wchar_t* pluginPath) {
 	//Convert path to image as string to wchar_t
@@ -12,6 +13,9 @@ bool renga2nwc::initialize(const wchar_t* pluginPath) {
 		return false;
 	r_app = pApplication;
 	r_project = r_app->Project;
+	auto project_path = r_project->FilePath;
+	if (project_path.length() < 2)
+		return false;
 
 	if (auto pUI = pApplication->GetUI())
 	{
@@ -31,7 +35,10 @@ bool renga2nwc::initialize(const wchar_t* pluginPath) {
 	}
 }
 
-
+//smth action to identify User's selection 
+void renga2nwc::user_selection() {
+	actions::actions(this->r_project->FilePath);
+}
 
 void renga2nwc::stop (){
 	r_app = nullptr;
