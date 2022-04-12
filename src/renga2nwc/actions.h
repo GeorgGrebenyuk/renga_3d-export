@@ -7,11 +7,11 @@
 class actions
 {
 public:
-	actions(_bstr_t project_file_path);
+	actions(_bstr_t project_file_path, Renga::IProjectPtr *pr_link);
 	int start();
 	void test_process();
 private:
 	std::string current_project_file_path;
-	Renga::IProjectPtr* renga_project;
+	Renga::IProjectPtr renga_project;
 };
 

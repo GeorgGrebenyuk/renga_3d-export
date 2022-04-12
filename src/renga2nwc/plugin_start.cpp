@@ -37,7 +37,8 @@ bool renga2nwc::initialize(const wchar_t* pluginPath) {
 
 //smth action to identify User's selection 
 void renga2nwc::user_selection() {
-	actions::actions(this->r_project->FilePath);
+	actions::actions(this->r_project->FilePath, r_project);
+	
 }
 
 void renga2nwc::stop (){

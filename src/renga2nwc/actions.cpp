@@ -1,7 +1,8 @@
 #include "actions.h"
 
-actions::actions(_bstr_t project_file_path) {
+actions::actions(_bstr_t project_file_path, Renga::IProjectPtr* pr_link) {
 	this->current_project_file_path = project_file_path;
+	this->renga_project = &pr_link;
 }
 int actions::start() {
 	// Initialise low-level API first. 
