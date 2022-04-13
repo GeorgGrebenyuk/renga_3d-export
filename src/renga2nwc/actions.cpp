@@ -1,8 +1,8 @@
 #include "actions.h"
 
-actions::actions(Renga::IApplicationPtr app) {
-	this->app = app;
-	this->current_project_file_path = this->app->Project->FilePath;
+actions::actions(int type) {
+	//this->app = Renga::CreateApplication();
+	//this->current_project_file_path = this->app->Project->FilePath;
 }
 int actions::start() {
 	// Initialise low-level API first. 

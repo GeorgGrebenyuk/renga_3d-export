@@ -1,13 +1,13 @@
 #pragma once
+#include "Renga_import.h"
 #include <iostream>
 #include <windows.h>
-#include<string>
+#include <string>
 #include "nwcreate/LiNwcAll.h"
-#include"Renga_import.h"
 class actions
 {
 public:
-	actions(Renga::IApplicationPtr app);
+	actions(int type);
 	int start();
 	void test_process();
 private:
