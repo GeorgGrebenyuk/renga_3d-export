@@ -1,27 +1,42 @@
+/*  Sample: ComplexToolButtons
+ *
+ *  This sample illustrates how to add custom complex tool buttons
+ *  to Renga's main toolbar.
+ *
+ *  Copyright Renga Software LLC, 2018. All rights reserved.
+ */
+
 #pragma once
-#include "Renga_import.h"
-#include<string>
-#include <iostream>
-#include <windows.h>
-#include <list>
+#import <RengaCOMAPI.tlb>
+//#include "Renga_import.h"
+
+#include <Renga/IPlugin.h>
+#include <Renga/ActionEventHandler.hpp>
+
+
 #include <memory>
+#include <list>
+#include <string>
 
 
-class renga2nwc : public plugins::IPlugin {
+class export_data_plugin : public plugins::IPlugin
+{
 public:
-	renga2nwc();
-	~renga2nwc();
-	bool initialize(const wchar_t* pluginPath)  override;
-	void stop()  override;
-	void user_selection(); //operation to select button and start other procedures
-	Renga::IApplicationPtr r_app;
-	Renga::IProjectPtr r_project;
+	export_data_plugin();
+	~export_data_plugin();
+
+	bool initialize(const wchar_t* pluginPath) override;
+	void stop() override;
+
 private:
 	void addHandler(Renga::ActionEventHandler* pHandler);
-private:
+	Renga::IImagePtr CreateIcon(Renga::IUIPtr pUI, std::wstring local_image_path);
+	Renga::IActionPtr CreateAction(Renga::IUIPtr pUI, 
+		const std::wstring& displayName, const std::wstring& icon_local_path);
 	typedef std::unique_ptr<Renga::ActionEventHandler> HandlerPtr;
-private:
+	std::wstring plugin_path;
 	std::list<HandlerPtr> m_handlerContainer;
+	Renga::IApplicationPtr r_app;
 };
 
-EXPORT_PLUGIN(renga2nwc)
+EXPORT_PLUGIN(export_data_plugin);

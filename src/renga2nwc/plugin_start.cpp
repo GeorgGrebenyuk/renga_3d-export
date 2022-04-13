@@ -1,83 +1,107 @@
 #include "plugin_start.h"
-#include "actions.h"
+#include <Renga/CreateApplication.hpp>
 
-class ButtonPress : public Renga::ActionEventHandler {
+class TextHandler : public Renga::ActionEventHandler
+{
 public:
-	ButtonPress(Renga::IActionPtr pAction, const std::wstring& text) :
-		Renga::ActionEventHandler(pAction),
-		m_text(text)
-	{
-	}
-	void OnTriggered() override
-	{
-		//::renga2nwc::user_selection();
-		::MessageBox(nullptr, (LPCWSTR)m_text.c_str(), (LPCWSTR)L"Plugin message", MB_ICONINFORMATION | MB_OK);
-	}
+    TextHandler(Renga::IActionPtr pAction, std::wstring& buttom_link) :
+        Renga::ActionEventHandler(pAction),
+        type_start(buttom_link)
+    {
+    }
 
-	void OnToggled(bool checked) override {}
+    void OnTriggered() override
+    {
+        ::MessageBox(nullptr, (LPCWSTR)type_start.c_str(), (LPCWSTR)L"Plugin message", MB_ICONINFORMATION | MB_OK);
+        //switch (this->type_start) {
+        //case 0:
+        //    actions(actions(Renga::CreateApplication()));
+        //    break;
+        //}
+        //actions(actions(type_start));
+    }
+
+    void OnToggled(bool checked) override {}
 
 private:
-	std::wstring m_text;
+    std::wstring type_start;
 };
-renga2nwc::renga2nwc()
+
+export_data_plugin::export_data_plugin()
 {
-	::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+    ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 }
 
-renga2nwc::~renga2nwc()
+export_data_plugin::~export_data_plugin()
 {
-	::CoUninitialize();
+    ::CoUninitialize();
+}
+/// <summary>
+/// Internal method to create IImagePtr by local file path
+/// </summary>
+Renga::IImagePtr export_data_plugin::CreateIcon(Renga::IUIPtr pUI, std::wstring local_image_path) {
+    std::wstring image_absolute_path = this->plugin_path + local_image_path;
+    Renga::IImagePtr pImage = pUI->CreateImage();
+    pImage->LoadFromFile(image_absolute_path.c_str());
+    return pImage;
 }
 
-void renga2nwc::addHandler(Renga::ActionEventHandler* pHandler)
+/// <summary>
+/// Internal method to create buttom and link it with User interface
+/// </summary>
+Renga::IActionPtr export_data_plugin::CreateAction(Renga::IUIPtr pUI, 
+    const std::wstring& displayName, const std::wstring& icon_local_path) //, int type
 {
-	m_handlerContainer.emplace_back(HandlerPtr(pHandler));
-}
-bool renga2nwc::initialize(const wchar_t* pluginPath) {
-	//Convert path to image as string to wchar_t
-	std::string image_local_path = "\\navis_logo.png";
-	std::wstring image_path_w(std::begin(image_local_path), std::end(image_local_path));
-	std::wstring string_path (pluginPath);
-	std::wstring full_path = string_path + image_path_w;
-	//Init application
-	auto pApplication = Renga::CreateApplication();
-	if (!pApplication)
-		return false;
-	r_app = pApplication;
-	r_project = r_app->Project;
-	auto project_path = r_project->FilePath;
-	if (project_path.length() < 2)
-		return false;
+    Renga::IActionPtr pAction = pUI->CreateAction();
+    pAction->PutIcon(CreateIcon(pUI, icon_local_path));
+    pAction->PutDisplayName(displayName.c_str());
 
-	if (auto pUI = pApplication->GetUI())
-	{
-		if (auto pUIPanelExtension = pUI->CreateUIPanelExtension())
-		{
-			Renga::IImagePtr pImage = pUI->CreateImage();
-			pImage->LoadFromFile(full_path.c_str());
+    std::wstring operation_type(L"navis");
+    addHandler(new TextHandler(pAction, operation_type));
 
-			Renga::IActionPtr pAction = pUI->CreateAction();
-			pAction->PutDisplayName(L"nwc_export");
-			pAction->PutToolTip(L"Click to start export procedure");
-			pAction->PutIcon(pImage);
-			addHandler(new ButtonPress(pAction, L"nwc_export"));
-			pUIPanelExtension->AddToolButton(pAction);
-
-			pUI->AddExtensionToPrimaryPanel(pUIPanelExtension);
-			pUI->AddExtensionToActionsPanel(pUIPanelExtension, Renga::ViewType::ViewType_View3D);
-		}
-	}
-	return true;
-}
-//smth action to identify User's selection 
-void renga2nwc::user_selection() {
-	//actions::actions();
-	
+    return pAction;
 }
 
-void renga2nwc::stop (){
-	m_handlerContainer.clear();
-	r_app = nullptr;
-	r_project = nullptr;
+void export_data_plugin::addHandler(Renga::ActionEventHandler* pHandler)
+{
+    m_handlerContainer.emplace_back(HandlerPtr(pHandler));
 }
 
+bool export_data_plugin::initialize(const wchar_t* pluginPath)
+{
+    std::wstring string_path(pluginPath);
+    this->plugin_path = string_path;
+
+    auto pApplication = Renga::CreateApplication();
+    if (!pApplication)
+        return false;
+    //r_app = pApplication;
+    //if (pApplication->Project->FilePath.length() < 2)
+    //    return false;
+
+    if (auto pUI = pApplication->GetUI())
+    {
+        if (auto pUIPanelExtension = pUI->CreateUIPanelExtension())
+        {          
+            if (auto pDropDownButton = pUI->CreateDropDownButton())
+            {
+                std::string main_button_name = "Select export data formats";
+                pDropDownButton->PutToolTip(main_button_name.c_str());
+                pDropDownButton->PutIcon(CreateIcon(pUI, L"\\export_logo.png"));
+
+                pDropDownButton->AddAction(
+                    CreateAction(pUI, L"NWC export", L"\\navis_logo.png"));
+
+                pUIPanelExtension->AddDropDownButton(pDropDownButton);
+            }
+            pUI->AddExtensionToPrimaryPanel(pUIPanelExtension);
+            pUI->AddExtensionToActionsPanel(pUIPanelExtension, Renga::ViewType::ViewType_View3D);
+        }
+    }
+    return true;
+}
+
+void export_data_plugin::stop()
+{
+    m_handlerContainer.clear();
+}
