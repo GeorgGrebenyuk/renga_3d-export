@@ -137,6 +137,7 @@
     <PostBuildEvent>
       <Command>copy /y "$(ProjectDir)Resources\renga2nwc.rndesc" "$(Outdir)renga2nwc.rndesc"
 copy /y "$(ProjectDir)Resources\navis_logo.png" "$(Outdir)navis_logo.png"
+copy /y "$(ProjectDir)Resources\export_logo.png" "$(Outdir)export_logo.png"
 copy /y "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\nwcreate_19.dll" "$(Outdir)nwcreate_19.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -177,6 +178,7 @@ copy /y "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\nwcreate_19.dll" 
   </ItemGroup>
   <ItemGroup>
     <Image Include="navis_logo.png" />
+    <Image Include="Resources\export_logo.png" />
     <Image Include="Resources\navis_logo.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

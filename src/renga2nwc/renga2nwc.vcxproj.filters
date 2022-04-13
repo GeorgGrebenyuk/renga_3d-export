@@ -21,10 +21,10 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renga_import.h">
+    <ClInclude Include="actions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="actions.h">
+    <ClInclude Include="Renga_import.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,6 +44,9 @@
   <ItemGroup>
     <Image Include="navis_logo.png" />
     <Image Include="Resources\navis_logo.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resources\export_logo.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
