@@ -1,5 +1,5 @@
 #pragma once
-#import <RengaCOMAPI.tlb>
+#import  <RengaCOMAPI.tlb>
 #include "Renga/PluginsSystemGlobal.h"
 #include "Renga/IPlugin.h"
 #include "Renga/EntityTypes.h"
