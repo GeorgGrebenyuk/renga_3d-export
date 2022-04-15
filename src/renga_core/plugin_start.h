@@ -8,6 +8,9 @@
 
 #pragma once
 #include "actions.h"
+#include <list>
+#include <memory>
+
 
 class export_data_plugin : public plugins::IPlugin
 {

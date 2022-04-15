@@ -1,6 +1,7 @@
 #include "actions.h"
 #include "renga_core.h"
 
+
 void default_start(const char* path_to_project) {
 	renga_data test_class(path_to_project);
 

@@ -3,8 +3,6 @@
 #include "string"
 #include "Renga_import.h"
 #include <iostream>
-#include <list>
-#include <memory>
 
 class renga_data {
 public:
