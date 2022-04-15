@@ -14,6 +14,7 @@ public:
     void OnTriggered() override
     {
         //::MessageBox(nullptr, (LPCWSTR)type_start.c_str(), (LPCWSTR)L"Plugin message", MB_ICONINFORMATION | MB_OK);
+        this->type_start = 0;
         actions(actions(this->type_start));
     }
 
