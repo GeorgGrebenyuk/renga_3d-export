@@ -6,6 +6,8 @@ ehthumbs.db
 ehthumbs_vista.db
 #Folders my
 samples/
+#Build dir
+plugin_bin
 
 # Dump file
 *.stackdump
@@ -63,6 +65,7 @@ Icon
 .com.apple.timemachine.donotpresent
 
 # Directories potentially created on remote AFP share
+
 .AppleDB
 .AppleDesktop
 Network Trash Folder
