@@ -6,4 +6,4 @@
 #define RENGA_CORE_API __declspec(dllimport)
 #endif
 
-extern "C" RENGA_CORE_API void default_start(const char * path_to_project);
+extern "C" RENGA_CORE_API void default_start(const char * path_to_project, int type_conversion);
