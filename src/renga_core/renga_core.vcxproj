@@ -127,19 +127,23 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>G:\30_Coding\SDK\RengaSDK\C++\Include;G:\30_Coding\SDK\RengaSDK\tlb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>G:\30_Coding\SDK\RengaSDK\C++\Include;G:\30_Coding\SDK\RengaSDK\tlb;G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>G:\30_Coding\SDK\Navisworks 2022\api\nwcreate</AdditionalLibraryDirectories>
+      <AdditionalDependencies>lib\x64\nwcreate_19.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(ProjectDir)Resources\export_data_plugin.rndesc" "$(SolutionDir)plugin_bin\export_data_plugin.rndesc"
 copy /y "$(ProjectDir)Resources\navis_logo.png" "$(SolutionDir)plugin_bin\navis_logo.png"
 copy /y "$(ProjectDir)Resources\export_logo.png" "$(SolutionDir)plugin_bin\export_logo.png"
-copy /y "$(SolutionDir)x64\Debug\$(ProjectName).dll" "$(SolutionDir)plugin_bin\export_data_plugin.dll"</Command>
+copy /y "$(SolutionDir)x64\Debug\$(ProjectName).dll" "$(SolutionDir)plugin_bin\export_data_plugin.dll"
+xcopy "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\*.*" "$(SolutionDir)x64\Debug" /Y /I /E
+copy /y "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\nwcreate_19.dll" "$(SolutionDir)plugin_bin\nwcreate_19.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -163,13 +167,15 @@ copy /y "$(SolutionDir)x64\Debug\$(ProjectName).dll" "$(SolutionDir)plugin_bin\e
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="actions.h" />
+    <ClInclude Include="navis.h" />
     <ClInclude Include="plugin_start.h" />
     <ClInclude Include="renga_core.h" />
     <ClInclude Include="Renga_import.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="actions.cpp" />
-    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="getting_data.cpp" />
+    <ClCompile Include="navis.cpp" />
     <ClCompile Include="plugin_start.cpp" />
   </ItemGroup>
   <ItemGroup>

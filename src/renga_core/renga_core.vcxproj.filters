@@ -16,6 +16,12 @@
     <Filter Include="Resources">
       <UniqueIdentifier>{c8221f4f-96d6-45f2-807e-01a9ffe1d20b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\export_formats">
+      <UniqueIdentifier>{a217ce2d-95b5-4a32-9d32-d0ad2ef150f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\export_formats">
+      <UniqueIdentifier>{265b8b4c-e563-4695-b339-2a9cf1d743f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renga_import.h">
@@ -30,16 +36,22 @@
     <ClInclude Include="plugin_start.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="navis.h">
+      <Filter>Header Files\export_formats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="actions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plugin_start.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="getting_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="navis.cpp">
+      <Filter>Source Files\export_formats</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
