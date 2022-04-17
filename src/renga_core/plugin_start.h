@@ -1,12 +1,4 @@
-/*  Sample: ComplexToolButtons
- *
- *  This sample illustrates how to add custom complex tool buttons
- *  to Renga's main toolbar.
- *
- *  Copyright Renga Software LLC, 2018. All rights reserved.
- */
-
-#pragma once
+//#pragma once
 #include "actions.h"
 #include <list>
 #include <memory>
@@ -18,8 +10,8 @@ public:
 	export_data_plugin();
 	~export_data_plugin();
 
-	bool initialize(const wchar_t* pluginPath) override;
-	void stop() override;
+	bool initialize(const wchar_t* pluginPath);
+	void stop();
 
 private:
 	void addHandler(Renga::ActionEventHandler* pHandler);

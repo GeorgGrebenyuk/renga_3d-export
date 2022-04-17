@@ -2,9 +2,6 @@
 //#include "actions.h"
 
 
-//#include <Renga/CreateApplication.hpp>
-
-
 class TextHandler : public Renga::ActionEventHandler
 {
 public:
@@ -17,7 +14,7 @@ public:
     void OnTriggered() override
     {
         //::MessageBox(nullptr, (LPCWSTR)type_start.c_str(), (LPCWSTR)L"Plugin message", MB_ICONINFORMATION | MB_OK);
-        renga_data(this->project_path);
+        //renga_data test(this->project_path);
     }
 
     void OnToggled(bool checked) override {}
@@ -98,6 +95,7 @@ bool export_data_plugin::initialize(const wchar_t* pluginPath)
             pUI->AddExtensionToActionsPanel(pUIPanelExtension, Renga::ViewType::ViewType_View3D);
         }
     }
+    pApplication->Quit();
     return true;
 }
 
