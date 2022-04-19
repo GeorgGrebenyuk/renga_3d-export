@@ -20,11 +20,12 @@ class renga_object {
 public:
 	GUID obj_type;
 	//geometry
-	std::list<Renga::FloatPoint3D> points_list; //all points at object
-	std::list<std::list<unsigned int>> triangles_definition;//all triangles at object
-	std::list<unsigned int> grid_definition; //indexes in triangles_definition
-	std::list<unsigned int> mesh_definition; //indexes in grid_definition
-	std::list<unsigned int> meshes_definition; //meshes at object
+	std::vector<Renga::FloatPoint3D> points_list; //all points at object
+	std::vector<std::vector<unsigned int>> triangles_definition;//all triangles at object
+	std::vector<unsigned int> grid_definition; //indexes in triangles_definition
+	std::vector<unsigned int> mesh_definition; //indexes in grid_definition
+	std::vector<unsigned int> meshes_definition; //meshes at object
+	std::vector<std::vector<std::vector< std::vector<unsigned int>>>> geometry_data;
 	//properties ...
 	//material ...
 	// 

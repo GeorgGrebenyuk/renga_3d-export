@@ -54,7 +54,7 @@ renga_data::renga_data(const char* project_filepath, int type_conversion)
 	switch (this->type) {
 
 	case 0:
-		navis start_conv(&objects, this->file_export_path);
+		navis start_conv(objects, this->file_export_path);
 		break;
 	}
 }
