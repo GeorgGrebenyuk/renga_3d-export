@@ -6,10 +6,11 @@
 class navis
 {
 public:
-	navis(std::vector<renga_object>* objects, std::wstring path_to_save);
+	navis(std::vector<renga_object> objects, std::wstring path_to_save);
 private:
-	std::vector<renga_object>* renga_objects;
+	std::vector<renga_object> renga_objects;
 	std::wstring path_to_save;
 	void start_export();
+
 };
 
