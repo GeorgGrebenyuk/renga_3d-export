@@ -37,6 +37,7 @@ void navis::start_export() {
 	{
 		renga_object one_object = this->renga_objects.at(counter_object);
 		LcNwcGroup one_object_instance;
+		one_object_instance.SetLayer(TRUE);
 		//LcNwcGeometry object_geometry;
 		one_object_instance.SetClassName(L"some class", "");
 		for (int counter_meshes = 0; counter_meshes < one_object.geometry_data.size(); counter_meshes++)
@@ -49,9 +50,11 @@ void navis::start_export() {
 			{
 				std::vector< std::vector<unsigned int>> grids_info = meshes_grids[counter_grids];
 				LcNwcGeometry grid_triangles_geometry;
+				grid_triangles_geometry.SetTwoSided(TRUE);
 				grid_triangles_geometry.SetName(L"one_internal_grid");
 				LcNwcGeometryStream stream_grid_record = grid_triangles_geometry.OpenStream();
 				stream_grid_record.Begin(LI_NWC_VERTEX_NONE);
+				//stream_grid_record.BeginPolygon();
 				for (int counter_triangles = 0; counter_triangles < grids_info.size(); counter_triangles++)
 				{
 					std::vector<unsigned int> triangle_definition = grids_info[counter_triangles];
@@ -60,20 +63,16 @@ void navis::start_export() {
 					Renga::FloatPoint3D p2 = one_object.points_list[triangle_definition[1]];
 					Renga::FloatPoint3D p3 = one_object.points_list[triangle_definition[2]];
 
-					//stream_grid_record.IndexedVertex(p1.X / 1000, p1.Z / 1000, p1.Y / 1000);
-					//stream_grid_record.IndexedVertex(p2.X / 1000, p2.Z / 1000, p2.Y / 1000);
-					//stream_grid_record.IndexedVertex(p3.X / 1000, p3.Z / 1000, p3.Y / 1000);
-
-					stream_grid_record.IndexedVertex(p1.X / 1000, p1.Y / 1000, p1.Z / 1000);
-					stream_grid_record.IndexedVertex(p2.X / 1000, p2.Y / 1000, p2.Z / 1000);
-					stream_grid_record.IndexedVertex(p3.X / 1000, p3.Y / 1000, p3.Z / 1000);
-
-					stream_grid_record.TriangleIndex(counter_triangles);
-					//stream_grid_record.ConvexPolyIndex(counter_triangles + 1);
-					
+					stream_grid_record.TriFanVertex(p1.X / 1000, p1.Z / 1000, p1.Y / 1000);
+					stream_grid_record.TriFanVertex(p2.X / 1000, p2.Z / 1000, p2.Y / 1000);
+					stream_grid_record.TriFanVertex(p3.X / 1000, p3.Z / 1000, p3.Y / 1000);
 				}
-				stream_grid_record.SeqEnd();
+				//stream_grid_record.EndPolygon();
 				stream_grid_record.End();
+
+				stream_grid_record.Begin(LI_NWC_VERTEX_NONE);
+				stream_grid_record.End();
+
 				grid_triangles_geometry.CloseStream(stream_grid_record);
 				one_mesh.AddNode(grid_triangles_geometry);
 			}
@@ -82,8 +81,4 @@ void navis::start_export() {
 		scene.AddNode(one_object_instance);
 	}
 	scene.WriteCache(L"", this->path_to_save.c_str(), LI_NWC_NO_PROGRESS_CALLBACKS, LI_NWC_NO_USER_DATA);
-}
-static LtBoolean LI_NWC_API grid_creating(LtNwcGeometry grid_geometry, LtNwcGeometryStream stream) 
-{
-	LcNwcGeometryStream s(stream);
 }
