@@ -14,7 +14,7 @@ public:
     void OnTriggered() override
     {
         //::MessageBox(nullptr, (LPCWSTR)type_start.c_str(), (LPCWSTR)L"Plugin message", MB_ICONINFORMATION | MB_OK);
-        //renga_data test(this->project_path);
+        renga_data test(this->project_path,0);
     }
 
     void OnToggled(bool checked) override {}
