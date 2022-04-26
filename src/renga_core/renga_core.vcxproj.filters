@@ -36,8 +36,8 @@
     <ClInclude Include="plugin_start.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="navis.h">
-      <Filter>Header Files\export_formats</Filter>
+    <ClInclude Include="renga_enums.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -45,9 +45,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="plugin_start.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="getting_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="navis.cpp">

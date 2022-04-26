@@ -6,7 +6,7 @@
 
 int main()
 {
-    std::string current_path = "E:\\DataTest\\Renga\\MetalFramePavilon.rnp"; //"ttage.rnp" E:\\Temp\\BridgeEx.rnp"
+    std::string current_path = "E:\\DataTest\\Renga\\SummerSchool_IS.rnp"; //"ttage.rnp" E:\\Temp\\BridgeEx.rnp"
 
     const char* new_path = current_path.c_str();
 

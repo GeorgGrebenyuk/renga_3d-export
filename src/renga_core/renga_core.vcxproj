@@ -167,14 +167,13 @@ copy /y "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\nwcreate_19.dll" 
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="actions.h" />
-    <ClInclude Include="navis.h" />
     <ClInclude Include="plugin_start.h" />
     <ClInclude Include="renga_core.h" />
+    <ClInclude Include="renga_enums.h" />
     <ClInclude Include="Renga_import.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="actions.cpp" />
-    <ClCompile Include="getting_data.cpp" />
     <ClCompile Include="navis.cpp" />
     <ClCompile Include="plugin_start.cpp" />
   </ItemGroup>
