@@ -5,30 +5,22 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <map>
+#include "renga_enums.h"
+
+
 
 class renga_data {
 public:
-	Renga::IProjectPtr r_project;
-	Renga::IApplicationPtr r_app;
-
 	renga_data(const char* project_filepath, int type_conversion);
 	std::wstring file_export_path;
-	//std::vector<renga_object> objects;
+
 	int type;
-};
-class renga_object {
-public:
-	GUID obj_type;
-	//geometry
-	std::vector<Renga::FloatPoint3D> points_list; //all points at object
-	std::vector<std::vector<unsigned int>> triangles_definition;//all triangles at object
-	std::vector<unsigned int> grid_definition; //indexes in triangles_definition
-	std::vector<unsigned int> mesh_definition; //indexes in grid_definition
-	std::vector<unsigned int> meshes_definition; //meshes at object
-	std::vector<std::vector<std::vector< std::vector<unsigned int>>>> geometry_data;
-	//properties ...
-	//material ...
-	// 
-	//class constructor
-	renga_object(Renga::IExportedObject3DPtr internal_object);
+private:
+	Renga::IProjectPtr r_project;
+	Renga::IApplicationPtr r_app;
+	void navis_init();
+	void navis_export();
+	std::map<int, std::vector<unsigned short>> grid2color;
+	std::vector<double> object_color (Renga::IModelObjectPtr obj);
 };
