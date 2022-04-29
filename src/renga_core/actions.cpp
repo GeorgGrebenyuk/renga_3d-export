@@ -2,8 +2,6 @@
 #include "renga_core.h"
 #include <regex>
 
-#include"navis.h"
-
 
 void default_start(const char* path_to_project, int type_conversion) {
 	renga_data test_class(path_to_project, type_conversion);
@@ -20,7 +18,7 @@ renga_data::renga_data(const char* project_filepath, int type_conversion)
 	this->r_app->OpenProject(bstr_t(project_filepath));
 	this->r_project = this->r_app->GetProject();
 
-
+	//tools::renga_project = this->r_project;
 	//Get file path and set new file name with target extension
 	std::wstring current_project_path(this->r_project->FilePath, SysStringLen(this->r_project->FilePath));
 	std::string current_project_path_str(current_project_path.begin(), current_project_path.end());
