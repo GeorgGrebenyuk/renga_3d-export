@@ -28,16 +28,16 @@ public:
 };
 struct level_objects {
 public:
-	std::list<int> ids;
+	std::list<Renga::IExportedObject3DPtr> objects;
 	int level_model_id;
-	level_objects(int level_model_id_input, int one_id)
+	level_objects(int level_model_id_input, Renga::IExportedObject3DPtr obj)
 	{
-		this->ids.push_back(one_id);
+		this->objects.push_back(obj);
 		this->level_model_id = level_model_id_input;
 	}
-	void add_item(int new_id)
+	void add_item(Renga::IExportedObject3DPtr new_object)
 	{
-		this->ids.push_back(new_id);
+		this->objects.push_back(new_object);
 	}
 };
 class renga_data {
@@ -79,15 +79,15 @@ public:
 		double new_z = current_params.at(2) + z;
 		return { new_x,new_y,new_z };
 	}
-	static void level2ids (Renga::IProjectPtr link_project, std::list<level_objects>* level2object, std::list<int> *non_level_objects);
+	static void level2ids (Renga::IProjectPtr link_project, std::list<level_objects>* level2object, std::list<Renga::IExportedObject3DPtr> *non_level_objects);
 //private:
 	//static std::vector<double> transform_parameters;
 };
 class navis_object {
 public:
-	navis_object(Renga::IProjectPtr project_input, std::vector<double> *offset_parameters, LcNwcGroup* parent_element, int object_id_in_exporting);
+	navis_object(Renga::IProjectPtr project_input, std::vector<double> *offset_parameters, LcNwcGroup* parent_element, Renga::IExportedObject3DPtr obj);
 private:
-	int object_id_in_exporting;
+	//int object_id_in_exporting;
 	std::vector<double> internal_offset_parameters;
 	Renga::IProjectPtr project;
 	Renga::IModelObjectPtr current_model_object;
