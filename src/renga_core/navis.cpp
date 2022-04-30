@@ -36,10 +36,9 @@ void renga_data::navis_export() {
 	Renga::IDataExporterPtr pDataExporter = this->r_project->GetDataExporter();
 	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
 	Renga::IModelObjectCollectionPtr objects_collection = this->r_project->GetModel()->GetObjects();
+	
 	//Getting levels
 	std::list<Renga::IModelObjectPtr> m_levels;
-	
-	
 	for (int counter_object = 0; counter_object < objects_collection3d->Count; counter_object++) 
 	{
 		Renga::IModelObjectPtr pModelObject = objects_collection->GetByIndex(counter_object);
@@ -75,13 +74,14 @@ void renga_data::navis_export() {
 
 			bool is_level = (std::find(c_levelTreeTypes.begin(), c_levelTreeTypes.end(), pModelObject->ObjectType) != c_levelTreeTypes.end());
 			bool is_level_non = (std::find(c_nonLevelTreeTypes.begin(), c_nonLevelTreeTypes.end(), pModelObject->ObjectType) != c_nonLevelTreeTypes.end());
-			if (is_level) tools::nwc_object(&counter_object, &levels_objects, this->r_project);
+			if (is_level) navis_object::navis_object(this->r_project, &this->projects_offset, &levels_objects, counter_object);
 			else if (!is_level && is_level_non)
 			{
 				bool was_id = (std::find(non_level_objects.begin(), non_level_objects.end(), counter_object) != non_level_objects.end());
 				if (!was_id)
 				{
-					tools::nwc_object(&counter_object, &non_levels_objects, this->r_project);
+					navis_object::navis_object(this->r_project, &this->projects_offset, &non_levels_objects, counter_object);
+					non_level_objects.push_back(counter_object);
 				}
 			}
 		}
