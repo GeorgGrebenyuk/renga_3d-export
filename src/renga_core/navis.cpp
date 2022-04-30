@@ -37,6 +37,9 @@ void renga_data::navis_export() {
 	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
 	Renga::IModelObjectCollectionPtr objects_collection = this->r_project->GetModel()->GetObjects();
 	
+	std::cout << "objects_collection count" << objects_collection->GetCount() << std::endl;
+	std::cout << "objects_collection3d count" << objects_collection3d->GetCount() << std::endl;
+
 	//Getting levels
 	std::list<Renga::IModelObjectPtr> m_levels;
 	for (int counter_object = 0; counter_object < objects_collection3d->Count; counter_object++) 
@@ -49,47 +52,48 @@ void renga_data::navis_export() {
 	}
 	//Sort levels
 	m_levels.sort(tools::compare_levels);
-
-	//Create arrays with objects id on each level and as other list - objects with non level property
-	//std::map<Renga::ILevelObjectPtr, std::list<int>> level2ids;
+	
+	//Create containers for objects on level and as other group -- objects without level's reference
 	std::list<int> non_level_objects;
-	//Parse objects on level
+	std::list<level_objects> level2objects;
+
+	std::map<int, Renga::IModelObjectPtr> id2level;
+	for (Renga::IModelObjectPtr one_level : m_levels)
+	{
+		id2level.insert(std::pair<int, Renga::IModelObjectPtr>(one_level->Id, one_level));
+	}
+	std::cout << "end level work" << std::endl;
+	tools::level2ids(this->r_project, &level2objects, &non_level_objects);
+	std::cout << "end sort objects on levels" << std::endl;
+
+	for (level_objects one_group : level2objects)
+	{
+		Renga::IModelObjectPtr level_object = id2level[one_group.level_model_id];
+		Renga::ILevelPtr level_instanse;
+		level_object->QueryInterface(&level_instanse);
+
+		LcNwcGroup levels_objects;
+		levels_objects.SetName(level_instanse->LevelName);
+		levels_objects.SetLayer(TRUE);
+
+		int counter_objects = 0;
+		for (int counter_model_exporting_id : one_group.ids)
+		{
+			std::cout << counter_objects << std::endl;
+			navis_object::navis_object(this->r_project, &this->projects_offset, &levels_objects, counter_model_exporting_id);
+			counter_objects++;
+		}
+		scene.AddNode(levels_objects);
+	}
+
 	LcNwcGroup non_levels_objects;
 	non_levels_objects.SetName(L"Models objects");
 	non_levels_objects.SetLayer(TRUE);
-
-	for (Renga::IModelObjectPtr one_level : m_levels)
+	for (int counter_model_exporting_id : non_level_objects)
 	{
-		Renga::ILevelPtr pLevel;
-		one_level->QueryInterface(&pLevel);
-		LcNwcGroup levels_objects;
-		levels_objects.SetLayer(TRUE);
-		levels_objects.SetName(pLevel->LevelName);
-
-		for (int counter_object = 0; counter_object < objects_collection3d->Count; counter_object++)
-		{
-			Renga::IExportedObject3DPtr internal_object = objects_collection3d->Get(counter_object);
-			int internal_object_id = internal_object->GetModelObjectId();
-			Renga::IModelObjectPtr pModelObject = objects_collection->GetById(internal_object_id);
-
-			bool is_level = (std::find(c_levelTreeTypes.begin(), c_levelTreeTypes.end(), pModelObject->ObjectType) != c_levelTreeTypes.end());
-			bool is_level_non = (std::find(c_nonLevelTreeTypes.begin(), c_nonLevelTreeTypes.end(), pModelObject->ObjectType) != c_nonLevelTreeTypes.end());
-			if (is_level) navis_object::navis_object(this->r_project, &this->projects_offset, &levels_objects, counter_object);
-			else if (!is_level && is_level_non)
-			{
-				bool was_id = (std::find(non_level_objects.begin(), non_level_objects.end(), counter_object) != non_level_objects.end());
-				if (!was_id)
-				{
-					navis_object::navis_object(this->r_project, &this->projects_offset, &non_levels_objects, counter_object);
-					non_level_objects.push_back(counter_object);
-				}
-			}
-		}
-		scene.AddNode(levels_objects);
-		
+		navis_object::navis_object(this->r_project, &this->projects_offset, &non_levels_objects, counter_model_exporting_id);
 	}
 	scene.AddNode(non_levels_objects);
-	
-	
+		
 	scene.WriteCache(L"", wfilename, LI_NWC_NO_PROGRESS_CALLBACKS, LI_NWC_NO_USER_DATA);
 }
