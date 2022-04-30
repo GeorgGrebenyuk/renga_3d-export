@@ -172,6 +172,6 @@ void navis_object::getting_properties(LcNwcGroup* object_defenition)
 			internal_name = one_prop->Name + "meters3";
 		}
 		internal_props.AddProperty(one_prop->Name, one_prop->Name, one_property);
-		(*object_defenition).AddAttribute(internal_props);
 	}
+	(*object_defenition).AddAttribute(internal_props);
 }
