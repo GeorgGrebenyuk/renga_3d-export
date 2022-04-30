@@ -29,7 +29,16 @@ public:
 struct level_objects {
 public:
 	std::list<int> ids;
-	Renga::ILevelPtr level;
+	int level_model_id;
+	level_objects(int level_model_id_input, int one_id)
+	{
+		this->ids.push_back(one_id);
+		this->level_model_id = level_model_id_input;
+	}
+	void add_item(int new_id)
+	{
+		this->ids.push_back(new_id);
+	}
 };
 class renga_data {
 public:
@@ -70,34 +79,7 @@ public:
 		double new_z = current_params.at(2) + z;
 		return { new_x,new_y,new_z };
 	}
-	static std::list<level_objects> level2ids (Renga::IProjectPtr link_project); 
-	static void add_object_to_level_list(Renga::ILevelObjectPtr level, int obj_id)
-	{
-		Renga::IModelObjectPtr l_obj;
-		level->QueryInterface(&l_obj);
-		if (!(level2ids).empty())
-		{
-			bool is_level_in_map = false;
-			for (std::pair<Renga::ILevelObjectPtr, std::list<int>> one_pair : (level2ids))
-			{
-				Renga::IModelObjectPtr m_obj;
-				one_pair.first->QueryInterface(&m_obj);
-				if (m_obj->GetId() == l_obj->GetId())
-				{
-					is_level_in_map = true;
-
-					one_pair.second.push_back(obj_id);
-					break;
-				}	
-			}
-			if (!is_level_in_map)
-			{
-				(level2ids).insert(std::pair<Renga::ILevelObjectPtr, std::list<int>>(level, std::list<int>{obj_id}));
-			}
-			
-		}
-		else (level2ids).insert(std::pair<Renga::ILevelObjectPtr, std::list<int>>(level, std::list<int>{obj_id}));
-	}
+	static void level2ids (Renga::IProjectPtr link_project, std::list<level_objects>* level2object, std::list<int> *non_level_objects);
 //private:
 	//static std::vector<double> transform_parameters;
 };
