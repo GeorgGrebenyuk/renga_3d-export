@@ -1,16 +1,25 @@
 #include "actions.h"
-navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>* offset_parameters, LcNwcGroup* parent_element, int object_id_in_exporting)
+#include <chrono>
+navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>* offset_parameters, LcNwcGroup* parent_element, Renga::IExportedObject3DPtr obj ) //int object_id_in_exporting
 {
+	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	
+
 	this->project = project_input;
 	this->internal_offset_parameters = *offset_parameters;
-	this->object_id_in_exporting = object_id_in_exporting;
+	//this->object_id_in_exporting = object_id_in_exporting;
 
-	this->current_model_object_geometry = this->project->GetDataExporter()->GetObjects3D()->Get(object_id_in_exporting);
+	//this->current_model_object_geometry = this->project->GetDataExporter()->GetObjects3D()->Get(object_id_in_exporting);
+	this->current_model_object_geometry = obj;
+	std::chrono::steady_clock::time_point end0 = std::chrono::steady_clock::now();
+	std::cout << "gettind internal object = " << std::chrono::duration_cast<std::chrono::microseconds>(end0 - begin).count() << std::endl;
+
 	int internal_object_id = this->current_model_object_geometry->GetModelObjectId();
 	this->current_model_object = this->project->GetModel()->GetObjects()->GetById(internal_object_id);
-	
-	Renga::ILevelObjectPtr object_on_level;
-	this->current_model_object->QueryInterface(&object_on_level);
+
+	std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
+	std::cout << "gettind model object = " << std::chrono::duration_cast<std::chrono::microseconds>(end1 - end0).count() << std::endl;
+
 
 	LcNwcGroup one_object_instance;
 
@@ -18,8 +27,16 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>
 	one_object_instance.SetName(this->current_model_object->GetName());
 
 	this->getting_color(&one_object_instance);
+	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
+	std::cout << "gettind colors = " << std::chrono::duration_cast<std::chrono::microseconds>(end2 - end1).count() << std::endl;
+
 	this->create_geometry(&one_object_instance);
+	std::chrono::steady_clock::time_point end3 = std::chrono::steady_clock::now();
+	std::cout << "gettind geometry = " << std::chrono::duration_cast<std::chrono::microseconds>(end3 - end2).count() << std::endl;
+
 	this->getting_properties(&one_object_instance);
+	std::chrono::steady_clock::time_point end4 = std::chrono::steady_clock::now();
+	std::cout << "gettind props = " << std::chrono::duration_cast<std::chrono::microseconds>(end4 - end3).count() << std::endl;
 
 	(*parent_element).AddNode(one_object_instance);
 }
