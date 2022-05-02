@@ -207,11 +207,11 @@ void navis_object::create_geometry(LcNwcGroup* object_defenition)
 }
 void navis_object::getting_properties(LcNwcGroup* object_defenition)
 {
-	Renga::IPropertyContainerPtr props_usual = this->current_model_object->GetProperties();
 
-	Renga::IGuidCollectionPtr props_ids = props_usual->GetIds();
 
 	//Internal properies
+	Renga::IPropertyContainerPtr props_usual = this->current_model_object->GetProperties();
+	Renga::IGuidCollectionPtr props_ids = props_usual->GetIds();
 	LcNwcPropertyAttribute internal_props;
 	internal_props.SetClassName(L"Renga_Properies", "Внутренние свойства");
 	//std::vector <Renga::IPropertyPtr> props_as_props;
@@ -257,5 +257,116 @@ void navis_object::getting_properties(LcNwcGroup* object_defenition)
 		}
 		internal_props.AddProperty(one_prop->Name, one_prop->Name, one_property);
 	}
+
+	//Quantity properties
+	Renga::IQuantityContainerPtr  pQuantityContainer = this->current_model_object->GetQuantities();
+	LcNwcPropertyAttribute quantity_props;
+	quantity_props.SetClassName(L"Renga_Quantity_props", "Расчетные характеристики");
+
+	
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::Area))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"Area", "Площадь, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::Count))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetInt32(pQuantity->AsCount());
+		quantity_props.AddProperty(L"Count", "Количество, шт.", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::CrossSectionOverallHeight))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsLength(Renga::LengthUnit_Millimeters));
+		quantity_props.AddProperty(L"CrossSectionOverallHeight", "Общая высота поперечного сечения (или профиля) объекта, мм.", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::CrossSectionOverallWidth))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsLength(Renga::LengthUnit_Millimeters));
+		quantity_props.AddProperty(L"CrossSectionOverallWidth", "Общая ширина поперечного сечения (или профиля) объекта, мм.", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GlazingArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GlazingArea", "Площадь остекления окна или двери, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossArea", "Общая площадь объекта или слоя, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossCeilingArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossCeilingArea", "Общая площадь потолка помещения, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossCrossSectionArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossCrossSectionArea", "Площадь поперечного сечения, включая внутреннее пространство, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossFloorArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossFloorArea", "Общая площадь потолка помещения, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossMass))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsMass(Renga::MassUnit_Kilograms));
+		quantity_props.AddProperty(L"GrossMass", "Общая масса объекта, кг.", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossPerimeter))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsLength(Renga::LengthUnit_Millimeters));
+		quantity_props.AddProperty(L"GrossPerimeter", "Общий периметр объекта, м.", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossSideArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossSideArea", "Общая площадь вдоль базовой линии без элементов обработки, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossSideAreaLeft))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossSideAreaLeft", "Общая площадь вдоль крайней левой линии без элементов обработки, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossSideAreaRight))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossSideAreaRight", "Общая площадь вдоль крайней правой линии без элементов обработки, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossVolume))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetVolumeFloat(pQuantity->AsVolume(Renga::VolumeUnit_Meters3));
+		quantity_props.AddProperty(L"GrossVolume", "Общий внутренний объем объекта, м3", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::GrossWallArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"GrossWallArea", "Общая площадь стен комнаты, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::InnerSurfaceArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"InnerSurfaceArea", "Общая площадь внутренней поверхности, м2", one_quan_property);
+	}
+
 	(*object_defenition).AddAttribute(internal_props);
+	(*object_defenition).AddAttribute(quantity_props);
 }
