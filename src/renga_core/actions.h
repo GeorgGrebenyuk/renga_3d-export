@@ -10,22 +10,7 @@
 #include "nwcreate/LiNwcAll.h"
 #include <math.h>
 
-template <typename prop_name_type, typename Prop_type>
-class prop_internal {
-private:
-	prop_name_type name;
-	Prop_type value;
-public:
-	prop_internal(prop_name_type name_input, Prop_type value_input) : value(value_input), name(name_input)
-	{ }
-	Prop_type get_value() {
-		return value;
-	}
-	prop_name_type get_value() {
-		return name;
-	}
-	
-};
+
 struct level_objects {
 public:
 	std::list<Renga::IExportedObject3DPtr> objects;
