@@ -12,13 +12,15 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>
 	//this->current_model_object_geometry = this->project->GetDataExporter()->GetObjects3D()->Get(object_id_in_exporting);
 	this->current_model_object_geometry = obj;
 	std::chrono::steady_clock::time_point end0 = std::chrono::steady_clock::now();
-	std::cout << "gettind internal object = " << std::chrono::duration_cast<std::chrono::microseconds>(end0 - begin).count() << std::endl;
+	long long time_1 = std::chrono::duration_cast<std::chrono::microseconds>(end0 - begin).count();
+	//std::cout << "gettind internal object = " << time_1 << std::endl;
 
 	int internal_object_id = this->current_model_object_geometry->GetModelObjectId();
 	this->current_model_object = this->project->GetModel()->GetObjects()->GetById(internal_object_id);
 
 	std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-	std::cout << "gettind model object = " << std::chrono::duration_cast<std::chrono::microseconds>(end1 - end0).count() << std::endl;
+	long long time_2 = std::chrono::duration_cast<std::chrono::microseconds>(end1 - end0).count();
+	//std::cout << "gettind model object = " << time_2 << std::endl;
 
 
 	LcNwcGroup one_object_instance;
@@ -28,15 +30,20 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>
 
 	this->getting_color(&one_object_instance);
 	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-	std::cout << "gettind colors = " << std::chrono::duration_cast<std::chrono::microseconds>(end2 - end1).count() << std::endl;
+	long long time_3 = std::chrono::duration_cast<std::chrono::microseconds>(end2 - end1).count();
+	//std::cout << "gettind colors = " << time_3 << std::endl;
 
 	this->create_geometry(&one_object_instance);
 	std::chrono::steady_clock::time_point end3 = std::chrono::steady_clock::now();
-	std::cout << "gettind geometry = " << std::chrono::duration_cast<std::chrono::microseconds>(end3 - end2).count() << std::endl;
+	long long time_4 = std::chrono::duration_cast<std::chrono::microseconds>(end3 - end2).count();
+	//std::cout << "gettind geometry = " <<time_4<< std::endl;
 
 	this->getting_properties(&one_object_instance);
 	std::chrono::steady_clock::time_point end4 = std::chrono::steady_clock::now();
-	std::cout << "gettind props = " << std::chrono::duration_cast<std::chrono::microseconds>(end4 - end3).count() << std::endl;
+	long long time_5 = std::chrono::duration_cast<std::chrono::microseconds>(end4 - end3).count();
+	//std::cout << "gettind props = " <<time_5 << std::endl;
+
+	std::cout << this->current_model_object->ObjectTypeS<< time_1 << ";" << time_2 << ";" << time_3 << ";" << time_4 << ";" << time_5 << std::endl;
 
 	(*parent_element).AddNode(one_object_instance);
 }
@@ -77,7 +84,7 @@ void navis_object::getting_color(LcNwcGroup* object_defenition)
 				}
 				else
 				{
-					std::cout << "error " << this->current_model_object->GetName() << std::endl;
+					//std::cout << "error " << this->current_model_object->GetName() << std::endl;
 				}
 			}
 		}
@@ -147,7 +154,7 @@ void navis_object::getting_properties(LcNwcGroup* object_defenition)
 	//Internal properies
 	LcNwcPropertyAttribute internal_props;
 	internal_props.SetClassName(L"Renga_Properies", "Внутренние свойства");
-	std::vector <Renga::IPropertyPtr> props_as_props;
+	//std::vector <Renga::IPropertyPtr> props_as_props;
 	for (int counter_property = 0; counter_property < props_ids->GetCount(); counter_property++)
 	{
 		GUID id = props_ids->Get(counter_property);
