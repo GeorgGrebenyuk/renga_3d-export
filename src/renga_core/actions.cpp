@@ -44,10 +44,12 @@ renga_data::renga_data(const char* project_filepath, int type_conversion)
 		this->navis_init();
 		break;
 	}
+	this->r_app->Quit();
 }
 void renga_data::get_transform_parameters()
 {
 	Renga::IBuildingInfoPtr building_object = this->r_project->GetBuildingInfo();
+	
 	Renga::IPropertyContainerPtr props_usual = building_object->GetProperties();
 	
 	bstr_t offset_x = "IfcLocationX";
@@ -63,28 +65,29 @@ void renga_data::get_transform_parameters()
 	bool angle_correct = false;
 	double angle_value = 0.0;
 
-	//Renga::IGuidCollectionPtr props_ids = props_usual->GetIds();
-	//for (int counter_property = 0; counter_property < props_ids->GetCount(); counter_property++)
-	//{
-	//	GUID id = props_ids->Get(counter_property);
-	//	Renga::IPropertyPtr one_prop = props_usual->Get(id);
-	//	if (one_prop->Name == offset_x && one_prop->GetType() == Renga::PropertyType::PropertyType_Double) {
-	//		offset_x_value = one_prop->GetDoubleValue();
-	//		is_x_correct = true;
-	//	}
-	//	else if (one_prop->Name == offset_y && one_prop->GetType() == Renga::PropertyType::PropertyType_Double) {
-	//		offset_y_value = one_prop->GetDoubleValue();
-	//		is_y_correct = true;
-	//	}
-	//	else if (one_prop->Name == offset_z && one_prop->GetType() == Renga::PropertyType::PropertyType_Double) {
-	//		offset_z_value = one_prop->GetDoubleValue();
-	//		is_z_correct = true;
-	//	}
-	//	else if (one_prop->Name == angle && one_prop->GetType() == Renga::PropertyType::PropertyType_Angle) {
-	//		angle_value = one_prop->GetAngleValue(Renga::AngleUnit::AngleUnit_Degrees);
-	//		angle_correct = true;
-	//	}
-	//}
+	Renga::IGuidCollectionPtr props_ids = props_usual->GetIds();
+
+	/*for (int counter_property = 0; counter_property < props_ids->GetCount(); counter_property++)
+	{
+		GUID id = props_ids->Get(counter_property);
+		Renga::IPropertyPtr one_prop = props_usual->Get(id);
+		if (one_prop->Name == offset_x && one_prop->GetType() == Renga::PropertyType::PropertyType_Double) {
+			offset_x_value = one_prop->GetDoubleValue();
+			is_x_correct = true;
+		}
+		else if (one_prop->Name == offset_y && one_prop->GetType() == Renga::PropertyType::PropertyType_Double) {
+			offset_y_value = one_prop->GetDoubleValue();
+			is_y_correct = true;
+		}
+		else if (one_prop->Name == offset_z && one_prop->GetType() == Renga::PropertyType::PropertyType_Double) {
+			offset_z_value = one_prop->GetDoubleValue();
+			is_z_correct = true;
+		}
+		else if (one_prop->Name == angle && one_prop->GetType() == Renga::PropertyType::PropertyType_Angle) {
+			angle_value = one_prop->GetAngleValue(Renga::AngleUnit::AngleUnit_Degrees);
+			angle_correct = true;
+		}
+	}*/
 	
 	std::vector<double> find_transform_parameters{ offset_x_value,offset_y_value,offset_z_value,angle_value };
 	this->projects_offset = find_transform_parameters;
