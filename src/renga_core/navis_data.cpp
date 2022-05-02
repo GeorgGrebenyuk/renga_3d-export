@@ -192,9 +192,9 @@ void navis_object::create_geometry(LcNwcGroup* object_defenition)
 				std::vector<double> transformed_2 = tools::get_transformed_coords(p2.X / 1000, p2.Y / 1000, p2.Z / 1000, this->internal_offset_parameters);
 				std::vector<double> transformed_3 = tools::get_transformed_coords(p3.X / 1000, p3.Y / 1000, p3.Z / 1000, this->internal_offset_parameters);
 
-				stream_grid_record.TriFanVertex(transformed_1.at(0), transformed_1.at(2), transformed_1.at(1));
-				stream_grid_record.TriFanVertex(transformed_2.at(0), transformed_2.at(2), transformed_2.at(1));
-				stream_grid_record.TriFanVertex(transformed_3.at(0), transformed_3.at(2), transformed_3.at(1));
+				stream_grid_record.TriFanVertex(transformed_1.at(0), transformed_1.at(1), transformed_1.at(2));
+				stream_grid_record.TriFanVertex(transformed_2.at(0), transformed_2.at(1), transformed_2.at(2));
+				stream_grid_record.TriFanVertex(transformed_3.at(0), transformed_3.at(1), transformed_3.at(2));
 
 				stream_grid_record.End();
 			}
