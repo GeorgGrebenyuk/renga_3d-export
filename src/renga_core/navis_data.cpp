@@ -13,14 +13,14 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>
 	//this->current_model_object_geometry = this->project->GetDataExporter()->GetObjects3D()->Get(object_id_in_exporting);
 	this->current_model_object_geometry = obj;
 	std::chrono::steady_clock::time_point end0 = std::chrono::steady_clock::now();
-	long long time_1 = std::chrono::duration_cast<std::chrono::microseconds>(end0 - begin).count();
+	long long time_1 = std::chrono::duration_cast<std::chrono::milliseconds>(end0 - begin).count();
 	//std::cout << "gettind internal object = " << time_1 << std::endl;
 
 	int internal_object_id = this->current_model_object_geometry->GetModelObjectId();
 	this->current_model_object = this->project->GetModel()->GetObjects()->GetById(internal_object_id);
 
 	std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-	long long time_2 = std::chrono::duration_cast<std::chrono::microseconds>(end1 - end0).count();
+	long long time_2 = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - end0).count();
 	//std::cout << "gettind model object = " << time_2 << std::endl;
 
 
@@ -37,20 +37,21 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>
 	//else - init color in geometry block (by Grid type)
 	
 	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-	long long time_3 = std::chrono::duration_cast<std::chrono::microseconds>(end2 - end1).count();
+	long long time_3 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - end1).count();
 	//std::cout << "gettind colors = " << time_3 << std::endl;
 
 	this->create_geometry(&one_object_instance);
 	std::chrono::steady_clock::time_point end3 = std::chrono::steady_clock::now();
-	long long time_4 = std::chrono::duration_cast<std::chrono::microseconds>(end3 - end2).count();
+	long long time_4 = std::chrono::duration_cast<std::chrono::milliseconds>(end3 - end2).count();
 	//std::cout << "gettind geometry = " <<time_4<< std::endl;
 
 	this->getting_properties(&one_object_instance);
 	std::chrono::steady_clock::time_point end4 = std::chrono::steady_clock::now();
-	long long time_5 = std::chrono::duration_cast<std::chrono::microseconds>(end4 - end3).count();
+	long long time_5 = std::chrono::duration_cast<std::chrono::milliseconds>(end4 - end3).count();
 	//std::cout << "gettind props = " <<time_5 << std::endl;
 
-	std::cout << this->current_model_object->ObjectTypeS<< time_1 << ";" << time_2 << ";" << time_3 << ";" << time_4 << ";" << time_5 << std::endl;
+	std::string str_type = tools::get_type_str(this->current_model_object->GetObjectType());
+	std::cout << str_type << "\tgeometry getting time = " << time_4 << "ms" << std::endl;// +";" << time_1 << ";" << time_2 << ";" << time_3 << ";" << time_4 << ";" << time_5 << std::endl;
 
 	(*parent_element).AddNode(one_object_instance);
 }
