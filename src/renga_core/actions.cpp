@@ -140,8 +140,6 @@ void renga_data::get_data() {
 					transparency = transparency_object;
 					color = color_object;
 				}
-
-
 				for (int counter_triangles = 0; counter_triangles < pGrid->GetTriangleCount(); counter_triangles++)
 				{
 					std::vector<std::vector<double>> triangle_geometry;
@@ -156,7 +154,6 @@ void renga_data::get_data() {
 					std::vector<double> transformed_2 = tools::get_transformed_coords(p2.X / 1000, p2.Y / 1000, p2.Z / 1000, this->projects_offset);
 					std::vector<double> transformed_3 = tools::get_transformed_coords(p3.X / 1000, p3.Y / 1000, p3.Z / 1000, this->projects_offset);
 
-					
 					triangle_geometry.push_back({ transformed_1.at(0), transformed_1.at(1), transformed_1.at(2) });
 					triangle_geometry.push_back({ transformed_2.at(0), transformed_2.at(1), transformed_2.at(2) });
 					triangle_geometry.push_back({ transformed_3.at(0), transformed_3.at(1), transformed_3.at(2) });
