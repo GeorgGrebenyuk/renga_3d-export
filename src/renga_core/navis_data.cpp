@@ -34,8 +34,6 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<std::ve
 			body_material.SetTransparency(grid_info.transparency);
 			grid_data.AddAttribute(body_material);
 
-
-			//grid_triangles_geometry.SetName(L"GEOMETRY");
 			LcNwcGeometryStream stream_grid_record = grid_data.OpenStream();
 
 			for (std::vector<std::vector<double>> triangle_info : grid_info.geometry)
@@ -45,7 +43,6 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<std::ve
 				{
 					stream_grid_record.TriFanVertex(one_point[0], one_point[1], one_point[2]);
 				}
-
 				stream_grid_record.End();
 			}
 			grid_data.CloseStream(stream_grid_record);
@@ -63,8 +60,6 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<std::ve
 }
 void navis_object::getting_properties(LcNwcGroup* object_defenition)
 {
-
-
 	//Internal properies
 	Renga::IPropertyContainerPtr props_usual = this->current_model_object->GetProperties();
 	Renga::IGuidCollectionPtr props_ids = props_usual->GetIds();
@@ -221,6 +216,12 @@ void navis_object::getting_properties(LcNwcGroup* object_defenition)
 		LcNwcData one_quan_property;
 		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
 		quantity_props.AddProperty(L"InnerSurfaceArea", "Общая площадь внутренней поверхности, м2", one_quan_property);
+	}
+	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::InnerSurfaceExternalArea))
+	{
+		LcNwcData one_quan_property;
+		one_quan_property.SetAreaFloat(pQuantity->AsArea(Renga::AreaUnit_Meters2));
+		quantity_props.AddProperty(L"InnerSurfaceExternalArea", "Общая площадь внутренней поверхности (внешней по отношению к раме), м2", one_quan_property);
 	}
 
 	(*object_defenition).AddAttribute(internal_props);
