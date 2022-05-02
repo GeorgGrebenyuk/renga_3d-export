@@ -50,6 +50,12 @@
     <ClCompile Include="navis.cpp">
       <Filter>Source Files\export_formats</Filter>
     </ClCompile>
+    <ClCompile Include="navis_data.cpp">
+      <Filter>Source Files\export_formats</Filter>
+    </ClCompile>
+    <ClCompile Include="tools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\export_data_plugin.rndesc">
