@@ -16,16 +16,16 @@ void renga_data::navis_init() {
 		this->navis_export();
 		break;
 	case LI_NWC_API_NOT_LICENSED:
-		printf("Not Licensed\n");
+		printf("\n\nNot Licensed\n");
 		status = 1;
 	case LI_NWC_API_INTERNAL_ERROR:
 	default:
-		printf("Internal Error\n");
+		printf("\n\nInternal Error\n");
 		status = 2;
 
 	}
 
-	std::cout << "nwcreate lib status = " << status << std::endl;
+	std::cout << "\n\nnwcreate lib status = " << status << std::endl;
 
 }
 void renga_data::navis_export() {
@@ -37,42 +37,15 @@ void renga_data::navis_export() {
 	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
 	Renga::IModelObjectCollectionPtr objects_collection = this->r_project->GetModel()->GetObjects();
 	
-	double all_objects_3d = objects_collection3d->GetCount();
-	std::cout << "objects_collection3d count = " << all_objects_3d << std::endl;
+	int all_objects_3d = objects_collection3d->GetCount();
+	std::cout << "\n\nStart export to NWC\n\n"<< std::endl;
 
-	//Getting levels
-	std::list<Renga::IModelObjectPtr> m_levels;
-	for (int counter_object = 0; counter_object < objects_collection3d->Count; counter_object++) 
-	{
-		Renga::IModelObjectPtr pModelObject = objects_collection->GetByIndex(counter_object);
-		if (pModelObject->GetObjectType() == Renga::ObjectTypes::Level)
-		{
-			m_levels.push_back(pModelObject);
-		}
-	}
-	//Sort levels
-	m_levels.sort(tools::compare_levels);
 	
-	//Create containers for objects on level and as other group -- objects without level's reference
-	std::list<Renga::IExportedObject3DPtr> non_level_objects;
-	std::list<level_objects> level2objects;
-
-	std::map<int, Renga::IModelObjectPtr> id2level;
-	for (Renga::IModelObjectPtr one_level : m_levels)
-	{
-		//if (one_level != NULL)
-		//{
-		//	
-		//}
-		id2level.insert(std::pair<int, Renga::IModelObjectPtr>(one_level->Id, one_level));
-	}
-	//std::cout << "end level work" << std::endl;
-	tools::level2ids(this->r_project, &level2objects, &non_level_objects, &m_levels);
 	//std::cout << "end sort objects on levels" << std::endl;
 	int counter_objects = 0;
-	for (level_objects one_group : level2objects)
+	for (level_objects one_group : this->level2objects)
 	{
-		Renga::IModelObjectPtr level_object = id2level[one_group.level_model_id];
+		Renga::IModelObjectPtr level_object = this->id2level[one_group.level_model_id];
 		Renga::ILevelPtr level_instanse;
 		level_object->QueryInterface(&level_instanse);
 
@@ -81,10 +54,11 @@ void renga_data::navis_export() {
 		levels_objects.SetLayer(TRUE);
 
 		
-		for (Renga::IExportedObject3DPtr obj : one_group.objects)
+		for (int obj : one_group.objects)
 		{
-			std::cout << "Progress = " << counter_objects / all_objects_3d * 100.0 << "% for ";
-			navis_object::navis_object(this->r_project, &this->projects_offset, &levels_objects, obj);
+			Renga::IModelObjectPtr obj_model = objects_collection->GetById(objects_collection3d->Get(obj)->GetModelObjectId());
+			tools::log_status_work(all_objects_3d, counter_objects, "writing", obj_model->GetName());
+			navis_object::navis_object(this->r_project, &this->grids_collection_in_meshes.at(obj), &levels_objects, obj_model);
 			counter_objects++;
 		}
 		scene.AddNode(levels_objects);
@@ -93,10 +67,11 @@ void renga_data::navis_export() {
 	LcNwcGroup non_levels_objects;
 	non_levels_objects.SetName(L"Models objects");
 	non_levels_objects.SetLayer(TRUE);
-	for (Renga::IExportedObject3DPtr obj : non_level_objects)
+	for (int obj : this->non_level_objects)
 	{
-		std::cout << "Progress = " << counter_objects / all_objects_3d * 100.0 << "% for ";
-		navis_object::navis_object(this->r_project, &this->projects_offset, &non_levels_objects, obj);
+		Renga::IModelObjectPtr obj_model = objects_collection->GetById(objects_collection3d->Get(obj)->GetModelObjectId());
+		tools::log_status_work(all_objects_3d, counter_objects, "writing", obj_model->GetName());
+		navis_object::navis_object(this->r_project, &this->grids_collection_in_meshes.at(obj), &non_levels_objects, obj_model);
 		counter_objects++;
 	}
 	scene.AddNode(non_levels_objects);

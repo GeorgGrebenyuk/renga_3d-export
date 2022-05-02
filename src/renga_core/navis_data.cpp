@@ -1,209 +1,65 @@
 #include "actions.h"
 #include <chrono>
-navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>* offset_parameters, 
-	LcNwcGroup* parent_element, Renga::IExportedObject3DPtr obj ) //int object_id_in_exporting
+
+
+#include "actions.h"
+navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<std::vector<grid_description>>* object_info, LcNwcGroup* parent_element, Renga::IModelObjectPtr obj)
 {
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-	
-
 	this->project = project_input;
-	this->internal_offset_parameters = *offset_parameters;
-	//this->object_id_in_exporting = object_id_in_exporting;
-
-	//this->current_model_object_geometry = this->project->GetDataExporter()->GetObjects3D()->Get(object_id_in_exporting);
-	this->current_model_object_geometry = obj;
-	std::chrono::steady_clock::time_point end0 = std::chrono::steady_clock::now();
-	long long time_1 = std::chrono::duration_cast<std::chrono::milliseconds>(end0 - begin).count();
-	//std::cout << "gettind internal object = " << time_1 << std::endl;
-
-	int internal_object_id = this->current_model_object_geometry->GetModelObjectId();
-	this->current_model_object = this->project->GetModel()->GetObjects()->GetById(internal_object_id);
-
-	std::chrono::steady_clock::time_point end1 = std::chrono::steady_clock::now();
-	long long time_2 = std::chrono::duration_cast<std::chrono::milliseconds>(end1 - end0).count();
-	//std::cout << "gettind model object = " << time_2 << std::endl;
-
+	//int internal_object_id = this->current_model_object_geometry->GetModelObjectId();
+	this->current_model_object = obj;
 
 	LcNwcGroup one_object_instance;
-
 	one_object_instance.SetLayer(TRUE);
 	one_object_instance.SetName(this->current_model_object->GetName());
 
-	GUID obj_type = this->current_model_object->GetObjectType();
-	if (obj_type != Renga::ObjectTypes::Window && obj_type != Renga::ObjectTypes::Door)
+	LcNwcGroup geometry_data;
+	one_object_instance.SetLayer(TRUE);
+
+	for (std::vector<grid_description> mesh_info : (*object_info))
 	{
-		this->getting_color(&one_object_instance);
-	}
-	//else - init color in geometry block (by Grid type)
-	
-	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
-	long long time_3 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - end1).count();
-	//std::cout << "gettind colors = " << time_3 << std::endl;
-
-	this->create_geometry(&one_object_instance);
-	std::chrono::steady_clock::time_point end3 = std::chrono::steady_clock::now();
-	long long time_4 = std::chrono::duration_cast<std::chrono::milliseconds>(end3 - end2).count();
-	//std::cout << "gettind geometry = " <<time_4<< std::endl;
-
-	this->getting_properties(&one_object_instance);
-	std::chrono::steady_clock::time_point end4 = std::chrono::steady_clock::now();
-	long long time_5 = std::chrono::duration_cast<std::chrono::milliseconds>(end4 - end3).count();
-	//std::cout << "gettind props = " <<time_5 << std::endl;
-
-	std::string str_type = tools::get_type_str(this->current_model_object->GetObjectType());
-	std::cout << str_type << "\tgeometry getting time = " << time_4 << "ms" << std::endl;// +";" << time_1 << ";" << time_2 << ";" << time_3 << ";" << time_4 << ";" << time_5 << std::endl;
-
-	(*parent_element).AddNode(one_object_instance);
-}
-void navis_object::getting_color(LcNwcGroup* object_defenition)
-{
-	std::vector<double> object_color = { 1.0,1.0,1.0 };
-	Renga::IObjectWithMaterialPtr pObjectWithMaterial;
-	this->current_model_object->QueryInterface(&pObjectWithMaterial);
-	if (pObjectWithMaterial)
-	{
-		if (Renga::IMaterialPtr obj_material = this->project->GetMaterialManager()->GetMaterial(pObjectWithMaterial->GetMaterialId())) {
-			Renga::Color mat_color = obj_material->GetColor();
-
-			double color_red(mat_color.Red / 255.0);
-			double color_green(mat_color.Green / 255.0);
-			double color_blue(mat_color.Blue / 255.0);
-			object_color = { color_red ,color_green,color_blue };
-			//return object_color;
-		}
-
-	}
-	Renga::IObjectWithLayeredMaterialPtr pObjectWithLayeredMaterial;
-	this->current_model_object->QueryInterface(&pObjectWithLayeredMaterial);
-	if (pObjectWithLayeredMaterial) {
-		if (Renga::ILayeredMaterialPtr pLayeredMaterial = this->project->GetLayeredMaterialManager()
-			->GetLayeredMaterialByIdGroupPair(pObjectWithLayeredMaterial->GetLayeredMaterialIdGroupPair())) {
-			Renga::IMaterialLayerCollectionPtr pLayers = pLayeredMaterial->GetLayers();
-			if (pLayers->GetCount() > 0) {
-				Renga::IMaterialLayerPtr pLayer = pLayers->Get(0);
-				Renga::IMaterialPtr obj_material = pLayer->GetMaterial();
-				if (obj_material != NULL)
-				{
-					Renga::Color mat_color = obj_material->GetColor();
-					double color_red(mat_color.Red / 255.0);
-					double color_green(mat_color.Green / 255.0);
-					double color_blue(mat_color.Blue / 255.0);
-					object_color = { color_red ,color_green,color_blue };
-				}
-				else
-				{
-					//std::cout << "error " << this->current_model_object->GetName() << std::endl;
-				}
-			}
-		}
-	}
-	LcNwcMaterial body_material;
-	body_material.SetDiffuseColor(object_color[0], object_color[1], object_color[2]);
-	body_material.SetAmbientColor(object_color[0], object_color[1], object_color[2]);
-	(*object_defenition).AddAttribute(body_material);
-}
-void navis_object::getting_color_grid(LcNwcGeometry* geometry_definition, GUID* object_type, int *grid_type)
-{
-	std::vector<double> object_color = { 1.0,1.0,1.0 };
-	LcNwcMaterial body_material;
-	if ((*object_type) == Renga::ObjectTypes::Window)
-	{
-		switch (*grid_type)
+		LcNwcGroup mesh_data;
+		mesh_data.SetLayer(TRUE);
+		mesh_data.SetName(L"MESH");
+		for (grid_description grid_info : mesh_info)
 		{
-		case Renga::GridTypes::Window::Frame:
-			object_color = {0.729,0.596,0.274};
-			break;
-		case Renga::GridTypes::Window::Glass:
-			object_color = { 0.760,0.964,0.929};
-			body_material.SetTransparency(0.6);
-			break;
-		case Renga::GridTypes::Window::Sill:
-			object_color = { 0.674,0.674,0.674 };
-			break;
-		case Renga::GridTypes::Window::OutwardSill:
-			object_color = { 0.674,0.674,0.674 };
-			break;
-		case Renga::GridTypes::Window::Reveal:
-			body_material.SetTransparency(0.1);
-			break;
-		}
-	}
-	else if ((*object_type) == Renga::ObjectTypes::Door)
-	{
-		switch (*grid_type)
-		{
-		case Renga::GridTypes::Door::Glass:
-			object_color = { 0.760,0.964,0.929 };
-			body_material.SetTransparency(0.6);
-			break;
-		case Renga::GridTypes::Door::Frame:
-			object_color = { 0.4,0.2,1.0 };
-			break;
-		case Renga::GridTypes::Door::Solid:
-			object_color = { 0.4,0.2,0.0 };
-			break;
-		case Renga::GridTypes::Door::DoorLining:
-			object_color = { 0.4,0.0,0.0 };
-			break;
-		case Renga::GridTypes::Door::Threshold:
-			object_color = { 0.4,0.0,0.0 };
-			break;
-		}
-	}
-	
-	body_material.SetDiffuseColor(object_color[0], object_color[1], object_color[2]);
-	body_material.SetAmbientColor(object_color[0], object_color[1], object_color[2]);
-	(*geometry_definition).AddAttribute(body_material);
-}
-void navis_object::create_geometry(LcNwcGroup* object_defenition)
-{
-	auto obj_type = this->current_model_object->GetObjectType();
-	for (int counter_meshes = 0; counter_meshes < this->current_model_object_geometry->GetMeshCount(); counter_meshes++)
-	{
-		Renga::IMeshPtr pMesh = this->current_model_object_geometry->GetMesh(counter_meshes);
-		LcNwcGroup one_mesh;
-		one_mesh.SetLayer(FALSE);
-		one_mesh.SetName(L"one_internal_mesh");
+			LcNwcGeometry grid_data;
+			//LcNwcGroup grid_data;
+			//grid_data.SetLayer(TRUE);
+			grid_data.SetName(L"GRID");
 
-		for (int counter_grids = 0; counter_grids < pMesh->GetGridCount(); counter_grids++)
-		{
-			Renga::IGridPtr pGrid = pMesh->GetGrid(counter_grids);
-			LcNwcGeometry grid_triangles_geometry;
-			int grid_type = pGrid->GetGridType();
-			if (obj_type == Renga::ObjectTypes::Window | obj_type == Renga::ObjectTypes::Door)
+			LcNwcMaterial body_material;
+			body_material.SetDiffuseColor(grid_info.color[0], grid_info.color[1], grid_info.color[2]);
+			body_material.SetAmbientColor(grid_info.color[0], grid_info.color[1], grid_info.color[2]);
+			body_material.SetTransparency(grid_info.transparency);
+			grid_data.AddAttribute(body_material);
+
+
+			//grid_triangles_geometry.SetName(L"GEOMETRY");
+			LcNwcGeometryStream stream_grid_record = grid_data.OpenStream();
+
+			for (std::vector<std::vector<double>> triangle_info : grid_info.geometry)
 			{
-				this->getting_color_grid(&grid_triangles_geometry, &obj_type, &grid_type);
-			}
-
-			grid_triangles_geometry.SetName(L"one_internal_grid");
-			LcNwcGeometryStream stream_grid_record = grid_triangles_geometry.OpenStream();
-			for (int counter_triangles = 0; counter_triangles < pGrid->GetTriangleCount(); counter_triangles++)
-			{
-				
-				Renga::Triangle triangle_definition = pGrid->GetTriangle(counter_triangles);
-
-				Renga::FloatPoint3D p1 = pGrid->GetVertex(triangle_definition.V0);
-				Renga::FloatPoint3D p2 = pGrid->GetVertex(triangle_definition.V1);
-				Renga::FloatPoint3D p3 = pGrid->GetVertex(triangle_definition.V2);
-
 				stream_grid_record.Begin(LI_NWC_VERTEX_NONE);
-				//std::vector<double> finded_parameters = params;
-
-				std::vector<double> transformed_1 = tools::get_transformed_coords(p1.X / 1000, p1.Y / 1000, p1.Z / 1000, this->internal_offset_parameters);
-				std::vector<double> transformed_2 = tools::get_transformed_coords(p2.X / 1000, p2.Y / 1000, p2.Z / 1000, this->internal_offset_parameters);
-				std::vector<double> transformed_3 = tools::get_transformed_coords(p3.X / 1000, p3.Y / 1000, p3.Z / 1000, this->internal_offset_parameters);
-
-				stream_grid_record.TriFanVertex(transformed_1.at(0), transformed_1.at(1), transformed_1.at(2));
-				stream_grid_record.TriFanVertex(transformed_2.at(0), transformed_2.at(1), transformed_2.at(2));
-				stream_grid_record.TriFanVertex(transformed_3.at(0), transformed_3.at(1), transformed_3.at(2));
+				for (std::vector<double> one_point : triangle_info)
+				{
+					stream_grid_record.TriFanVertex(one_point[0], one_point[1], one_point[2]);
+				}
 
 				stream_grid_record.End();
 			}
-			grid_triangles_geometry.CloseStream(stream_grid_record);
-			one_mesh.AddNode(grid_triangles_geometry);
+			grid_data.CloseStream(stream_grid_record);
+			//grid_data.AddNode(grid_data);
+			mesh_data.AddNode(grid_data);
 		}
-		(*object_defenition).AddNode(one_mesh);
+		geometry_data.AddNode(mesh_data);
 	}
+	one_object_instance.AddNode(geometry_data);
+	this->getting_properties(&one_object_instance);
+
+	std::cout << this->current_model_object->GetName();
+	(*parent_element).AddNode(one_object_instance);
+
 }
 void navis_object::getting_properties(LcNwcGroup* object_defenition)
 {
@@ -263,7 +119,7 @@ void navis_object::getting_properties(LcNwcGroup* object_defenition)
 	LcNwcPropertyAttribute quantity_props;
 	quantity_props.SetClassName(L"Renga_Quantity_props", "Расчетные характеристики");
 
-	
+
 	if (auto pQuantity = pQuantityContainer->Get(Renga::QuantityIds::Area))
 	{
 		LcNwcData one_quan_property;

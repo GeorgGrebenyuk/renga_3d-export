@@ -1,6 +1,6 @@
 #include "actions.h"
 void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* level2object, 
-	std::list<Renga::IExportedObject3DPtr>* non_level_objects, std::list<Renga::IModelObjectPtr>* m_levels)
+	std::list<int>* non_level_objects, std::list<Renga::IModelObjectPtr>* m_levels)
 {
 	Renga::IDataExporterPtr pDataExporter = link_project->GetDataExporter();
 	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
@@ -45,7 +45,7 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 				{
 					if (one_group.level_model_id == pLevelObject->LevelId)
 					{
-						one_group.add_item(internal_object);
+						one_group.add_item(counter_object);
 						//one_group.ids.push_back(counter_object);
 						level_find_status = true;
 						break;
@@ -53,19 +53,19 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 				}
 				if (!level_find_status)
 				{
-					(*level2object).push_back(level_objects(pLevelObject->LevelId, internal_object));
+					(*level2object).push_back(level_objects(pLevelObject->LevelId, counter_object));
 					//(*level2object).push_back(new_item);
 				}
 			}
 			else 
 			{
-				(*level2object).push_back(level_objects(pLevelObject->LevelId, internal_object));
+				(*level2object).push_back(level_objects(pLevelObject->LevelId, counter_object));
 				//(*level2object).push_back(new_item);
 			}
 		}
 		else
 		{
-			(*non_level_objects).push_back(internal_object);
+			(*non_level_objects).push_back(counter_object);
 		}
 	}
 }
