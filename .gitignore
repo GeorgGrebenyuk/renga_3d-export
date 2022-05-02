@@ -6,6 +6,7 @@ ehthumbs.db
 ehthumbs_vista.db
 #Folders my
 samples/
+out_versions/
 #Build dir
 plugin_bin
 
