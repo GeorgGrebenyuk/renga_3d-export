@@ -119,3 +119,155 @@ std::string tools::get_type_str(GUID obj_type)
 
 	return out_type;
 }
+void tools::get_quanity_prop(GUID quanity_prop, std::string* rus_name, std::string* eng_name, std::string* eng_code, std::string* rus_code)
+{
+	if (quanity_prop == Renga::QuantityIds::Area)
+	{
+		(*eng_code) = "NominalThickness";
+		(*rus_code) = "Номинальная толщина";
+		(*eng_name) = "The nominal thickness of an object or a layer";
+		(*rus_name) = "Номинальная толщина объекта или слоя";
+	}
+	else if (quanity_prop == Renga::QuantityIds::NominalWidth)
+	{
+		(*eng_code) = "NominalWidth";
+		(*rus_code) = "Номинальная ширина";
+		(*eng_name) = "The nominal width of an object";
+		(*rus_name) = "Номинальная ширина объекта.";
+	}
+	else if (quanity_prop == Renga::QuantityIds::NominalHeight)
+	{
+		(*eng_code) = "NominalHeight";
+		(*rus_code) = "Номинальная высота";
+		(*eng_name) = "The nominal height of an object or a layer";
+		(*rus_name) = "Номинальная высота объекта или слоя";
+	}
+	else if (quanity_prop == Renga::QuantityIds::Perimeter)
+	{
+		(*eng_code) = "Perimeter";
+		(*rus_code) = "Периметр";
+		(*eng_name) = "The perimeter of an object";
+		(*rus_name) = "Периметр объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::OverallWidth)
+	{
+		(*eng_code) = "OverallWidth";
+		(*rus_code) = "Общая ширина";
+		(*eng_name) = "The overall width measure. It equals the width of the bounding box of an object.";
+		(*rus_name) = "Ширина ограничивающей рамки объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::OverallHeight)
+	{
+		(*eng_code) = "OverallHeight";
+		(*rus_code) = "Общая ширина";
+		(*eng_name) = "The overall height measure. It equals the width of the bounding box of an object.";
+		(*rus_name) = "Высота ограничивающей рамки объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::OverallLength)
+	{
+		(*eng_code) = "OverallLength";
+		(*rus_code) = "Общая длина";
+		(*eng_name) = "The overall length measure. It equals the width of the bounding box of an object.";
+		(*rus_name) = "Длина ограничивающей рамки объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::OverallDepth)
+	{
+		(*eng_code) = "OverallDepth";
+		(*rus_code) = "Общая глубина";
+		(*eng_name) = "The overall depth measure. It equals the width of the bounding box of an object.";
+		(*rus_name) = "Глубина ограничивающей рамки объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::Volume)
+	{
+		(*eng_code) = "Volume";
+		(*rus_code) = "Объем";
+		(*eng_name) = "Overall volume measure";
+		(*rus_name) = "Общий объем";
+	}
+	else if (quanity_prop == Renga::QuantityIds::NetVolume)
+	{
+		(*eng_code) = "NetVolume";
+		(*rus_code) = "Абсолютный (чистый) объем";
+		(*eng_name) = "The total net volume of an object or a layer, taking into account possible processing features (cut-outs, etc.) or openings and recesses";
+		(*rus_name) = "Общий чистый объем объекта или слоя с учетом возможных особенностей обработки (вырезы и т.д.) или отверстий и углублений";
+	}
+	else if (quanity_prop == Renga::QuantityIds::NetMass)
+	{
+		(*eng_code) = "NetMass";
+		(*rus_code) = "Абсолютная (чистая) масса";
+		(*eng_name) = "The total net mass of an object or a layer, taking into account possible processing features (cut-outs, etc.) or openings and recesses";
+		(*rus_name) = "Общая чистая масса объекта или слоя с учетом возможных особенностей обработки (вырезы и т.д.) или отверстий и углублений";
+	}
+	else if (quanity_prop == Renga::QuantityIds::OuterSurfaceArea)
+	{
+		(*eng_code) = "OuterSurfaceArea";
+		(*rus_code) = "Площадь выдавленных поверхностей";
+		(*eng_name) = "The total area of extruded surfaces of an object (not taking into account the end cap areas), normally calculated as perimeter * length.";
+		(*rus_name) = "Общая площадь выдавленных поверхностей объекта (без учета областей торцевых крышек), обычно рассчитываемая как периметр * длина";
+	}
+	else if (quanity_prop == Renga::QuantityIds::CrossSectionOverallWidth)
+	{
+		(*eng_code) = "CrossSectionOverallWidth";
+		(*rus_code) = "Ширина поперечного сечения";
+		(*eng_name) = "The overall cross section (or profile) width of an object";
+		(*rus_name) = "Общая ширина поперечного сечения (или профиля) объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::CrossSectionOverallHeight)
+	{
+		(*eng_code) = "CrossSectionOverallHeight";
+		(*rus_code) = "Высота поперечного сечения";
+		(*eng_name) = "The overall cross section (or profile) height of an object";
+		(*rus_name) = "Общая высота поперечного сечения (или профиля) объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::NetCrossSectionArea)
+	{
+		(*eng_code) = "NetCrossSectionArea";
+		(*rus_code) = "Площадь поперечного сечения";
+		(*eng_name) = "Area of the cross section, excluding the interior space";
+		(*rus_name) = "Общая площадь поперечного сечения (или профиля) объекта";
+	}
+	else if (quanity_prop == Renga::QuantityIds::GrossCrossSectionArea)
+	{
+		(*eng_code) = "GrossCrossSectionArea";
+		(*rus_code) = "Площадь общего попереченого сечения";
+		(*eng_name) = "Area of the cross section, including interior space";
+		(*rus_name) = "Площадь поперечного сечения, включая внутреннее пространство";
+	}
+	else if (quanity_prop == Renga::QuantityIds::GrossSideArea)
+	{
+		(*eng_code) = "GrossSideArea";
+		(*rus_code) = "Площадь вдоль центральной линии слоя";
+		(*eng_name) = "The gross area along the center line of an object or a layer, excluding any processing features (cut-outs, etc.) or openings and recesses.";
+		(*rus_name) = "Общая площадь вдоль центральной линии объекта или слоя, исключая любые элементы обработки (вырезы и т.д.) или отверстия и углубления.";
+	}
+	else if (quanity_prop == Renga::QuantityIds::GrossSideAreaLeft)
+	{
+		(*eng_code) = "GrossSideAreaLeft";
+		(*rus_code) = "Площадь вдоль левой линии слоя";
+		(*eng_name) = "The gross area along the left line of an object or a layer, excluding any processing features (cut-outs, etc.) or openings and recesses.";
+		(*rus_name) = "Общая площадь вдоль левой линии объекта или слоя, исключая любые элементы обработки (вырезы и т.д.) или отверстия и углубления.";
+	}
+	else if (quanity_prop == Renga::QuantityIds::GrossSideAreaRight)
+	{
+		(*eng_code) = "GrossSideAreaRight";
+		(*rus_code) = "Площадь вдоль правой линии слоя";
+		(*eng_name) = "The gross area along the right line of an object or a layer, excluding any processing features (cut-outs, etc.) or openings and recesses.";
+		(*rus_name) = "Общая площадь вдоль правой линии объекта или слоя, исключая любые элементы обработки (вырезы и т.д.) или отверстия и углубления.";
+	}
+	else if (quanity_prop == Renga::QuantityIds::Area)
+	{
+		(*eng_code) = "Area";
+		(*rus_code) = "Площадь";
+		(*eng_name) = "The area of an object. For windows and doors it equals the area of the cross section along the center line.";
+		(*rus_name) = "Площадь объекта. Для окон и дверей он равен площади поперечного сечения вдоль центральной линии..";
+	}
+	else if (quanity_prop == Renga::QuantityIds::NetArea)
+	{
+		(*eng_code) = "NetArea";
+		(*rus_code) = "Площадь верхней поверхности";
+		(*eng_name) = "The total top surface area of an object or a layer, excluding any processing features (openings, cut-outs, etc.) or recesses.";
+		(*rus_name) = "Общая площадь верхней поверхности объекта или слоя, исключая любые элементы обработки (отверстия, вырезы и т.д.) или углубления.";
+	}
+
+
+}

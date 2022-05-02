@@ -84,6 +84,7 @@ public:
 		return l1_h <= l2_h;
 	}
 	static std::string get_type_str(GUID obj_type);
+	static void get_quanity_prop(GUID quanity_prop, std::string* rus_name, std::string* eng_name, std::string* eng_code, std::string* rus_code);
 	//static std::vector <double> get_transform_parameters(Renga::IProjectPtr link_project);
 	static std::vector <double> get_transformed_coords(double x, double y, double z, std::vector<double>  current_params)
 	{
@@ -113,5 +114,4 @@ private:
 	Renga::IModelObjectPtr current_model_object;
 	Renga::IExportedObject3DPtr current_model_object_geometry;
 	void getting_properties(LcNwcGroup* object_defenition);
-	
 };
