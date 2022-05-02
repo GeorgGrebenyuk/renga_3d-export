@@ -60,14 +60,14 @@ void renga_data::navis_export() {
 	std::map<int, Renga::IModelObjectPtr> id2level;
 	for (Renga::IModelObjectPtr one_level : m_levels)
 	{
-		if (one_level != NULL)
-		{
-			id2level.insert(std::pair<int, Renga::IModelObjectPtr>(one_level->Id, one_level));
-		}
-		
+		//if (one_level != NULL)
+		//{
+		//	
+		//}
+		id2level.insert(std::pair<int, Renga::IModelObjectPtr>(one_level->Id, one_level));
 	}
 	std::cout << "end level work" << std::endl;
-	tools::level2ids(this->r_project, &level2objects, &non_level_objects);
+	tools::level2ids(this->r_project, &level2objects, &non_level_objects, &m_levels);
 	std::cout << "end sort objects on levels" << std::endl;
 	int counter_objects = 0;
 	for (level_objects one_group : level2objects)
@@ -83,22 +83,23 @@ void renga_data::navis_export() {
 		
 		for (Renga::IExportedObject3DPtr obj : one_group.objects)
 		{
-			//std::cout << counter_objects << " " << std::endl;
+			std::cout << counter_objects << " ";
 			navis_object::navis_object(this->r_project, &this->projects_offset, &levels_objects, obj);
 			counter_objects++;
 		}
 		scene.AddNode(levels_objects);
 	}
 
-	/*LcNwcGroup non_levels_objects;
+	LcNwcGroup non_levels_objects;
 	non_levels_objects.SetName(L"Models objects");
 	non_levels_objects.SetLayer(TRUE);
 	for (Renga::IExportedObject3DPtr obj : non_level_objects)
 	{
-		std::cout << counter_objects << " " << std::endl;
+		std::cout << counter_objects << " ";
 		navis_object::navis_object(this->r_project, &this->projects_offset, &non_levels_objects, obj);
+		counter_objects++;
 	}
-	scene.AddNode(non_levels_objects);*/
+	scene.AddNode(non_levels_objects);
 		
 	scene.WriteCache(L"", wfilename, LI_NWC_NO_PROGRESS_CALLBACKS, LI_NWC_NO_USER_DATA);
 }
