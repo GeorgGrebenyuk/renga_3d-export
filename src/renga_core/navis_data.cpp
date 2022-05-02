@@ -1,6 +1,7 @@
 #include "actions.h"
 #include <chrono>
-navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>* offset_parameters, LcNwcGroup* parent_element, Renga::IExportedObject3DPtr obj ) //int object_id_in_exporting
+navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>* offset_parameters, 
+	LcNwcGroup* parent_element, Renga::IExportedObject3DPtr obj ) //int object_id_in_exporting
 {
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 	
@@ -28,7 +29,13 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<double>
 	one_object_instance.SetLayer(TRUE);
 	one_object_instance.SetName(this->current_model_object->GetName());
 
-	this->getting_color(&one_object_instance);
+	GUID obj_type = this->current_model_object->GetObjectType();
+	if (obj_type != Renga::ObjectTypes::Window && obj_type != Renga::ObjectTypes::Door)
+	{
+		this->getting_color(&one_object_instance);
+	}
+	//else - init color in geometry block (by Grid type)
+	
 	std::chrono::steady_clock::time_point end2 = std::chrono::steady_clock::now();
 	long long time_3 = std::chrono::duration_cast<std::chrono::microseconds>(end2 - end1).count();
 	//std::cout << "gettind colors = " << time_3 << std::endl;
@@ -94,23 +101,84 @@ void navis_object::getting_color(LcNwcGroup* object_defenition)
 	body_material.SetAmbientColor(object_color[0], object_color[1], object_color[2]);
 	(*object_defenition).AddAttribute(body_material);
 }
+void navis_object::getting_color_grid(LcNwcGeometry* geometry_definition, GUID* object_type, int *grid_type)
+{
+	std::vector<double> object_color = { 1.0,1.0,1.0 };
+	LcNwcMaterial body_material;
+	if ((*object_type) == Renga::ObjectTypes::Window)
+	{
+		switch (*grid_type)
+		{
+		case Renga::GridTypes::Window::Frame:
+			object_color = {0.729,0.596,0.274};
+			break;
+		case Renga::GridTypes::Window::Glass:
+			object_color = { 0.760,0.964,0.929};
+			body_material.SetTransparency(0.6);
+			break;
+		case Renga::GridTypes::Window::Sill:
+			object_color = { 0.674,0.674,0.674 };
+			break;
+		case Renga::GridTypes::Window::OutwardSill:
+			object_color = { 0.674,0.674,0.674 };
+			break;
+		case Renga::GridTypes::Window::Reveal:
+			body_material.SetTransparency(0.1);
+			break;
+		}
+	}
+	else if ((*object_type) == Renga::ObjectTypes::Door)
+	{
+		switch (*grid_type)
+		{
+		case Renga::GridTypes::Door::Glass:
+			object_color = { 0.760,0.964,0.929 };
+			body_material.SetTransparency(0.6);
+			break;
+		case Renga::GridTypes::Door::Frame:
+			object_color = { 0.4,0.2,1.0 };
+			break;
+		case Renga::GridTypes::Door::Solid:
+			object_color = { 0.4,0.2,0.0 };
+			break;
+		case Renga::GridTypes::Door::DoorLining:
+			object_color = { 0.4,0.0,0.0 };
+			break;
+		case Renga::GridTypes::Door::Threshold:
+			object_color = { 0.4,0.0,0.0 };
+			break;
+		}
+	}
+	
+	body_material.SetDiffuseColor(object_color[0], object_color[1], object_color[2]);
+	body_material.SetAmbientColor(object_color[0], object_color[1], object_color[2]);
+	(*geometry_definition).AddAttribute(body_material);
+}
 void navis_object::create_geometry(LcNwcGroup* object_defenition)
 {
+	auto obj_type = this->current_model_object->GetObjectType();
 	for (int counter_meshes = 0; counter_meshes < this->current_model_object_geometry->GetMeshCount(); counter_meshes++)
 	{
 		Renga::IMeshPtr pMesh = this->current_model_object_geometry->GetMesh(counter_meshes);
 		LcNwcGroup one_mesh;
-		one_mesh.SetLayer(TRUE);
+		one_mesh.SetLayer(FALSE);
 		one_mesh.SetName(L"one_internal_mesh");
 
 		for (int counter_grids = 0; counter_grids < pMesh->GetGridCount(); counter_grids++)
 		{
 			Renga::IGridPtr pGrid = pMesh->GetGrid(counter_grids);
 			LcNwcGeometry grid_triangles_geometry;
+			int grid_type = pGrid->GetGridType();
+			if (obj_type == Renga::ObjectTypes::Window | obj_type == Renga::ObjectTypes::Door)
+			{
+				this->getting_color_grid(&grid_triangles_geometry, &obj_type, &grid_type);
+			}
+
 			grid_triangles_geometry.SetName(L"one_internal_grid");
 			LcNwcGeometryStream stream_grid_record = grid_triangles_geometry.OpenStream();
 			for (int counter_triangles = 0; counter_triangles < pGrid->GetTriangleCount(); counter_triangles++)
 			{
+				
 				Renga::Triangle triangle_definition = pGrid->GetTriangle(counter_triangles);
 
 				Renga::FloatPoint3D p1 = pGrid->GetVertex(triangle_definition.V0);
@@ -119,23 +187,14 @@ void navis_object::create_geometry(LcNwcGroup* object_defenition)
 
 				stream_grid_record.Begin(LI_NWC_VERTEX_NONE);
 				//std::vector<double> finded_parameters = params;
-				if (this->internal_offset_parameters.at(0) == 0.0 && this->internal_offset_parameters.at(1) == 0.0
-					&& this->internal_offset_parameters.at(2) == 0.0 && this->internal_offset_parameters.at(3) == 0.0)
-				{
-					stream_grid_record.TriFanVertex(p1.X / 1000, p1.Z / 1000, p1.Y / 1000);
-					stream_grid_record.TriFanVertex(p2.X / 1000, p2.Z / 1000, p2.Y / 1000);
-					stream_grid_record.TriFanVertex(p3.X / 1000, p3.Z / 1000, p3.Y / 1000);
-				}
-				else
-				{
-					std::vector<double> transformed_1 = tools::get_transformed_coords(p1.X / 1000, p1.Z / 1000, p1.Y / 1000, this->internal_offset_parameters);
-					std::vector<double> transformed_2 = tools::get_transformed_coords(p2.X / 1000, p2.Z / 1000, p2.Y / 1000, this->internal_offset_parameters);
-					std::vector<double> transformed_3 = tools::get_transformed_coords(p3.X / 1000, p3.Z / 1000, p3.Y / 1000, this->internal_offset_parameters);
 
-					stream_grid_record.TriFanVertex(transformed_1.at(0), transformed_1.at(2), transformed_1.at(1));
-					stream_grid_record.TriFanVertex(transformed_2.at(0), transformed_2.at(2), transformed_2.at(1));
-					stream_grid_record.TriFanVertex(transformed_3.at(0), transformed_3.at(2), transformed_3.at(1));
-				}
+				std::vector<double> transformed_1 = tools::get_transformed_coords(p1.X / 1000, p1.Y / 1000, p1.Z / 1000, this->internal_offset_parameters);
+				std::vector<double> transformed_2 = tools::get_transformed_coords(p2.X / 1000, p2.Y / 1000, p2.Z / 1000, this->internal_offset_parameters);
+				std::vector<double> transformed_3 = tools::get_transformed_coords(p3.X / 1000, p3.Y / 1000, p3.Z / 1000, this->internal_offset_parameters);
+
+				stream_grid_record.TriFanVertex(transformed_1.at(0), transformed_1.at(2), transformed_1.at(1));
+				stream_grid_record.TriFanVertex(transformed_2.at(0), transformed_2.at(2), transformed_2.at(1));
+				stream_grid_record.TriFanVertex(transformed_3.at(0), transformed_3.at(2), transformed_3.at(1));
 
 				stream_grid_record.End();
 			}
