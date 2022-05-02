@@ -15,6 +15,8 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 
 		bool is_level = (std::find(c_levelTreeTypes.begin(), c_levelTreeTypes.end(), pModelObject->ObjectType) != c_levelTreeTypes.end());
 		bool is_level_non = (std::find(c_nonLevelTreeTypes.begin(), c_nonLevelTreeTypes.end(), pModelObject->ObjectType) != c_nonLevelTreeTypes.end());
+
+		//Leveld not even is equal valid level in model -- need check ...
 		if (is_level)
 		{
 			//level_objects new_item;
@@ -30,7 +32,7 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 						one_group.add_item(internal_object);
 						//one_group.ids.push_back(counter_object);
 						level_find_status = true;
-						//break;
+						break;
 					}
 				}
 				if (!level_find_status)
