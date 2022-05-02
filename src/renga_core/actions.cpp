@@ -31,7 +31,7 @@ renga_data::renga_data(const char* project_filepath, int type_conversion)
 	std::string  uniq_id_str = std::to_string(uniq_id.Data1);
 	std::string extension = "";
 	if (this->type == 0) extension = ".nwc";
-	std::string uuid_and_ext = uniq_id_str + "_" + extension;
+	std::string uuid_and_ext ="_" + uniq_id_str + extension;
 	std::string renga_ext = ".rnp";
 
 	current_project_path_str.replace(current_project_path_str.find(renga_ext), renga_ext.length(), uuid_and_ext);
@@ -65,7 +65,7 @@ void renga_data::get_transform_parameters()
 	bool angle_correct = false;
 	double angle_value = 0.0;
 
-	Renga::IGuidCollectionPtr props_ids = props_usual->GetIds();
+	//Renga::IGuidCollectionPtr props_ids = props_usual->GetIds();
 
 	/*for (int counter_property = 0; counter_property < props_ids->GetCount(); counter_property++)
 	{
