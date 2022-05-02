@@ -25,7 +25,7 @@ void renga_data::navis_init() {
 
 	}
 
-	std::cout << "status = " << status << std::endl;
+	std::cout << "nwcreate lib status = " << status << std::endl;
 
 }
 void renga_data::navis_export() {
@@ -37,8 +37,8 @@ void renga_data::navis_export() {
 	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
 	Renga::IModelObjectCollectionPtr objects_collection = this->r_project->GetModel()->GetObjects();
 	
-	std::cout << "objects_collection count = " << objects_collection->GetCount() << std::endl;
-	std::cout << "objects_collection3d count = " << objects_collection3d->GetCount() << std::endl;
+	double all_objects_3d = objects_collection3d->GetCount();
+	std::cout << "objects_collection3d count = " << all_objects_3d << std::endl;
 
 	//Getting levels
 	std::list<Renga::IModelObjectPtr> m_levels;
@@ -66,9 +66,9 @@ void renga_data::navis_export() {
 		//}
 		id2level.insert(std::pair<int, Renga::IModelObjectPtr>(one_level->Id, one_level));
 	}
-	std::cout << "end level work" << std::endl;
+	//std::cout << "end level work" << std::endl;
 	tools::level2ids(this->r_project, &level2objects, &non_level_objects, &m_levels);
-	std::cout << "end sort objects on levels" << std::endl;
+	//std::cout << "end sort objects on levels" << std::endl;
 	int counter_objects = 0;
 	for (level_objects one_group : level2objects)
 	{
@@ -83,7 +83,7 @@ void renga_data::navis_export() {
 		
 		for (Renga::IExportedObject3DPtr obj : one_group.objects)
 		{
-			std::cout << counter_objects << " ";
+			std::cout << "Progress = " << counter_objects / all_objects_3d * 100.0 << "% for ";
 			navis_object::navis_object(this->r_project, &this->projects_offset, &levels_objects, obj);
 			counter_objects++;
 		}
@@ -95,7 +95,7 @@ void renga_data::navis_export() {
 	non_levels_objects.SetLayer(TRUE);
 	for (Renga::IExportedObject3DPtr obj : non_level_objects)
 	{
-		std::cout << counter_objects << " ";
+		std::cout << "Progress = " << counter_objects / all_objects_3d * 100.0 << "% for ";
 		navis_object::navis_object(this->r_project, &this->projects_offset, &non_levels_objects, obj);
 		counter_objects++;
 	}
