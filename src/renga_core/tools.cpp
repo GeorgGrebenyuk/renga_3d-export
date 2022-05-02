@@ -1,5 +1,6 @@
 #include "actions.h"
-void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* level2object, std::list<Renga::IExportedObject3DPtr>* non_level_objects)
+void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* level2object, 
+	std::list<Renga::IExportedObject3DPtr>* non_level_objects, std::list<Renga::IModelObjectPtr>* m_levels)
 {
 	Renga::IDataExporterPtr pDataExporter = link_project->GetDataExporter();
 	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
@@ -14,7 +15,22 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 		pModelObject->QueryInterface(&pLevelObject);
 
 		bool is_level = (std::find(c_levelTreeTypes.begin(), c_levelTreeTypes.end(), pModelObject->ObjectType) != c_levelTreeTypes.end());
-		bool is_level_non = (std::find(c_nonLevelTreeTypes.begin(), c_nonLevelTreeTypes.end(), pModelObject->ObjectType) != c_nonLevelTreeTypes.end());
+		if (is_level) 
+		{
+			//Exception for non level id in object properties
+			bool find_level = false;
+			for (Renga::IModelObjectPtr level : (*m_levels))
+			{
+				if (level->Id == pLevelObject->LevelId)
+				{
+					find_level = true;
+					break;
+				}
+			}
+			if (!find_level) is_level = false;
+		}
+
+		//bool is_level_non = (std::find(c_nonLevelTreeTypes.begin(), c_nonLevelTreeTypes.end(), pModelObject->ObjectType) != c_nonLevelTreeTypes.end());
 
 		//Leveld not even is equal valid level in model -- need check ...
 		if (is_level)
@@ -47,7 +63,7 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 				//(*level2object).push_back(new_item);
 			}
 		}
-		else if (!is_level && is_level_non)
+		else
 		{
 			(*non_level_objects).push_back(internal_object);
 		}
