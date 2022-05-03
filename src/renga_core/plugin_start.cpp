@@ -1,19 +1,24 @@
 #include "plugin_start.h"
-
-
+#include "general_functions.h"
+#include "navis.h"
 class TextHandler : public Renga::ActionEventHandler
 {
 public:
-    TextHandler(Renga::IActionPtr pAction, int buttom_link, const char* file_path) :
+    TextHandler(Renga::IActionPtr pAction, int buttom_link, Renga::IProjectPtr project_input) :
         Renga::ActionEventHandler(pAction),
-        type_start(buttom_link)
+        type_start(buttom_link), project(project_input)
     {
     }
 
     void OnTriggered() override
     {
         //::MessageBox(nullptr, (LPCWSTR)type_start.c_str(), (LPCWSTR)L"Plugin message", MB_ICONINFORMATION | MB_OK);
-        renga_data test(this->project_path, 0);
+        renga_data model_data(this->project, type_start);
+        switch (type_start) {
+        case 0:
+            navis::navis(&model_data);
+            break;
+        }
     }
 
     void OnToggled(bool checked) override {}
@@ -21,6 +26,7 @@ public:
 private:
     int type_start;
     const char* project_path;
+    Renga::IProjectPtr project;
 };
 
 export_data_plugin::export_data_plugin()
@@ -47,14 +53,14 @@ Renga::IImagePtr export_data_plugin::CreateIcon(Renga::IUIPtr pUI, std::wstring 
 /// </summary>
 Renga::IActionPtr export_data_plugin::CreateAction(Renga::IUIPtr pUI, 
     const std::wstring& displayName, const std::wstring& icon_local_path, 
-    int type, const char* file_path) //, int type
+    int type, Renga::IProjectPtr project) //, int type
 {
     Renga::IActionPtr pAction = pUI->CreateAction();
     pAction->PutIcon(CreateIcon(pUI, icon_local_path));
     pAction->PutDisplayName(displayName.c_str());
 
     std::wstring operation_type(L"navis");
-    addHandler(new TextHandler(pAction, 0, file_path));
+    addHandler(new TextHandler(pAction, 0, project));
 
     return pAction;
 }
@@ -86,7 +92,7 @@ bool export_data_plugin::initialize(const wchar_t* pluginPath)
                 pDropDownButton->PutIcon(CreateIcon(pUI, L"\\export_logo.png"));
 
                 pDropDownButton->AddAction(
-                    CreateAction(pUI, L"NWC export", L"\\navis_logo.png", 0, proj->FilePath));
+                    CreateAction(pUI, L"NWC export", L"\\navis_logo.png", 0, proj));
 
                 pUIPanelExtension->AddDropDownButton(pDropDownButton);
             }
