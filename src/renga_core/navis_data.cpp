@@ -1,8 +1,5 @@
-#include "actions.h"
-#include <chrono>
+#include "navis.h"
 
-
-#include "actions.h"
 navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<std::vector<grid_description>>* object_info, LcNwcGroup* parent_element, Renga::IModelObjectPtr obj)
 {
 	this->project = project_input;
@@ -54,7 +51,7 @@ navis_object::navis_object(Renga::IProjectPtr project_input, std::vector<std::ve
 	one_object_instance.AddNode(geometry_data);
 	this->getting_properties(&one_object_instance);
 
-	std::cout << this->current_model_object->GetName();
+	//std::cout << this->current_model_object->GetName();
 	(*parent_element).AddNode(one_object_instance);
 
 }
