@@ -1,5 +1,5 @@
 # renga_3d-export
-[In progress now!] Plugin to convert renga's model to NWC data format (for Autodesk Navisworks)
+[In progress now!] Plugin to convert renga's model to 3D-data formats (now - only for Autodesk Navisworks - NWC)
 
 ## External dependencies (Внешние зависимости):
 1. Renga SDK (all header's file (in "Renga_imprort.h") and RengaCOMAPI.tlb). Download SDK [here](https://rengabim.com/sdk/);
