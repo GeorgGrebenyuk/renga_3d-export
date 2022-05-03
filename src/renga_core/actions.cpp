@@ -12,9 +12,9 @@ renga_data::renga_data(Renga::IProjectPtr project, int type_input)
 	this->file_export_path = export_path;
 	this->r_project = project;
 	this->get_transform_parameters();
-	std::cout << "Start read internal data (geometry and properties" << std::endl;
+	//std::cout << "Start read internal data (geometry and properties" << std::endl;
 	this->get_data();
-	std::cout << "Start sort layers by level" << std::endl;
+	//std::cout << "Start sort layers by level" << std::endl;
 	this->sort_layers();
 	std::cout << "End reading project!" << std::endl;
 	//this->projects_offset = tools::get_transform_parameters(this->r_project);
