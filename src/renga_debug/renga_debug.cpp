@@ -2,7 +2,7 @@
 //
 
 #include <iostream>
-#include "renga_core.h"
+#include "console_start.h"
 #include <windows.h>
 #include <filesystem>
 #include <comdef.h>
@@ -12,17 +12,17 @@ int main()
 {
     setlocale(LC_ALL, "");
     //TestHouse_Offset problem with getting props in IBuildingInfoPtr
-    std::string path_to_files_in_dir;
-    std::cout << "Press path to folder with Renga projects (rnp):" << std::endl;
-    std::cout << "¬ведите путь до папки с файлами проектов (rnp):\n" << std::endl;
-    std::cin >> path_to_files_in_dir;
-    std::cout << std::endl;
+    std::string path_to_files_in_dir = "E:\\DataTest\\Renga\\111";
+    //std::cout << "Press path to folder with Renga projects (rnp):" << std::endl;
+    //std::cout << "¬ведите путь до папки с файлами проектов (rnp):\n" << std::endl;
+    //std::cin >> path_to_files_in_dir;
+    //std::cout << std::endl;
 
-    int conv_type;
-    std::cout << "Press type of project conversion (0: Navisworks)" << std::endl;
-    std::cout << "”кажите тип дл€ преобразовани€ проекта (0: Navisworks)\n" << std::endl;
-    std::cin >> conv_type;
-    std::cout << std::endl;
+    int conv_type = 0;
+    //std::cout << "Press type of project conversion (0: Navisworks)" << std::endl;
+    //std::cout << "”кажите тип дл€ преобразовани€ проекта (0: Navisworks)\n" << std::endl;
+    //std::cin >> conv_type;
+    //std::cout << std::endl;
 
     for (const auto& entry : fs::directory_iterator(path_to_files_in_dir))
     {
