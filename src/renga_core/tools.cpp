@@ -1,4 +1,4 @@
-#include "actions.h"
+#include "general_functions.h"
 void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* level2object, 
 	std::list<int>* non_level_objects, std::list<Renga::IModelObjectPtr>* m_levels)
 {
@@ -6,7 +6,8 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
 	Renga::IModelObjectCollectionPtr objects_collection = link_project->GetModel()->GetObjects();
 
-	for (int counter_object = 0; counter_object < objects_collection3d->Count; counter_object++)
+	int all_3d = objects_collection3d->GetCount();
+	for (int counter_object = 0; counter_object < all_3d; counter_object++)
 	{
 		Renga::IExportedObject3DPtr internal_object = objects_collection3d->Get(counter_object);
 		//int internal_object_id = internal_object->GetModelObjectId();
@@ -14,6 +15,7 @@ void tools::level2ids(Renga::IProjectPtr link_project,std::list<level_objects>* 
 		Renga::ILevelObjectPtr pLevelObject;
 		pModelObject->QueryInterface(&pLevelObject);
 
+		auto type = pModelObject->ObjectType;
 		bool is_level = (std::find(c_levelTreeTypes.begin(), c_levelTreeTypes.end(), pModelObject->ObjectType) != c_levelTreeTypes.end());
 		if (is_level) 
 		{
