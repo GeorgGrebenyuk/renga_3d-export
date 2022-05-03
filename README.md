@@ -35,3 +35,4 @@
 - CityGML, \*.gml;
 - Autodesk(?) FBX, \*.fbx;
 - Rhino, \*.3dm;
+- Chronos group GLTF, \*.gltf/\*.glb;
