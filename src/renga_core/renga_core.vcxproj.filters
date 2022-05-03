@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -16,45 +8,54 @@
     <Filter Include="Resources">
       <UniqueIdentifier>{c8221f4f-96d6-45f2-807e-01a9ffe1d20b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\export_formats">
+    <Filter Include="entry_point">
+      <UniqueIdentifier>{ebd48c7f-7c95-41a8-82a0-01450510cb14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="export_formats">
       <UniqueIdentifier>{a217ce2d-95b5-4a32-9d32-d0ad2ef150f2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\export_formats">
-      <UniqueIdentifier>{265b8b4c-e563-4695-b339-2a9cf1d743f9}</UniqueIdentifier>
+    <Filter Include="general_functions">
+      <UniqueIdentifier>{5400e3da-6a6a-4542-8a86-429c45ae7a5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Renga_import.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="actions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="renga_core.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="navis.h">
+      <Filter>export_formats</Filter>
     </ClInclude>
     <ClInclude Include="plugin_start.h">
-      <Filter>Header Files</Filter>
+      <Filter>entry_point</Filter>
+    </ClInclude>
+    <ClInclude Include="console_start.h">
+      <Filter>entry_point</Filter>
+    </ClInclude>
+    <ClInclude Include="general_functions.h">
+      <Filter>general_functions</Filter>
     </ClInclude>
     <ClInclude Include="renga_enums.h">
-      <Filter>Header Files</Filter>
+      <Filter>general_functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Renga_import.h">
+      <Filter>general_functions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="actions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="plugin_start.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>entry_point</Filter>
+    </ClCompile>
+    <ClCompile Include="console_start.cpp">
+      <Filter>entry_point</Filter>
     </ClCompile>
     <ClCompile Include="navis.cpp">
-      <Filter>Source Files\export_formats</Filter>
+      <Filter>export_formats</Filter>
     </ClCompile>
     <ClCompile Include="navis_data.cpp">
-      <Filter>Source Files\export_formats</Filter>
+      <Filter>export_formats</Filter>
+    </ClCompile>
+    <ClCompile Include="actions.cpp">
+      <Filter>general_functions</Filter>
     </ClCompile>
     <ClCompile Include="tools.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>general_functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
