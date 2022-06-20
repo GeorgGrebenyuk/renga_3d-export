@@ -1,0 +1,15 @@
+<RengaPlugin>
+	<Name>Renga data exporter (in general, geometry)</Name>
+	<!-- Displayed plugin name -->
+	<Version>1.0</Version>
+	<!-- Plugin version -->
+	<Copyright>GeorgGrebenyuk</Copyright>
+	<!-- Copyright information -->
+	<RequiredAPIVersion>2.17</RequiredAPIVersion>
+	<!-- Minimum required version of Renga API -->
+	<!--PluginType>cpp</PluginType> -->
+	<PluginFilename>C:\Users\Georg\Documents\GitHub\renga_3d-export\src2\RengaExporter\x64\Debug\RengaExporter.dll</PluginFilename>
+	<!-- Path to the plugin's binary file, either relative to the folder containing the .rndesc file or an absolute one -->
+	<Vendor>-</Vendor>
+	<!-- Vendor of the plugin -->
+</RengaPlugin>
