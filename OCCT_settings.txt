@@ -1,0 +1,24 @@
+G:\Soft\Renga\Renga.exe
+PATH=%OCCT_INSTALL%/win64/vc14/bind;%VTK_INSTALL%/bin;%PATH%
+
+%RENGA_SDK%/C++/Include;%RENGA_SDK%/tlb;%OCCT_INSTALL%/inc;%VTK_INSTALL%/include/vtk-9.1;
+
+%OCCT_INSTALL%/win64/vc14/libd;%VTK_INSTALL%/lib;%(AdditionalLibraryDirectories)
+vtkInteractionStyle-9.1d.lib;vtkRenderingOpenGL2-9.1d.lib;vtkCommonCore-9.1d.lib;vtkRenderingCore-9.1d.lib;vtkCommonExecutionModel-9.1d.lib;TKTopAlgo.lib;TKMath.lib;TKPrim.lib;TKShHealing.lib;TKV3d.lib;TKIVtk.lib;TKBRep.lib;TKernel.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)
+
+
+copy /Y "%VTK_INSTALL%\bin\vtkRenderingOpenGL2-9.1d.dll" "$(TargetDir)vtkRenderingOpenGL2-9.1d.dll" 
+copy /Y "%VTK_INSTALL%\bin\vtkCommonCore-9.1d.dll" "$(TargetDir)vtkCommonCore-9.1d.dll"
+copy /Y "%VTK_INSTALL%\bin\vtkInteractionStyle-9.1d.dll" "$(TargetDir)vtkInteractionStyle-9.1d.dll"
+copy /Y "%VTK_INSTALL%\bin\vtkRenderingCore-9.1d.dll" "$(TargetDir)vtkRenderingCore-9.1d.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKTopAlgo.dll" "$(TargetDir)TKTopAlgo.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKMath.dll" "$(TargetDir)TKMath.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKPrim.dll" "$(TargetDir)TKPrim.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKShHealing.dll" "$(TargetDir)TKShHealing.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKV3d.dll" "$(TargetDir)TKV3d.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKIVtk.dll" "$(TargetDir)TKIVtk.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKBRep.dll" "$(TargetDir)TKBRep.dll"
+copy /Y "%OCCT_INSTALL%\win64\vc14\bind\TKernel.dll" "$(TargetDir)TKernel.dll"
+
+xcopy /Y /S "%VTK_INSTALL%\bin\*" "$(TargetDir)" 
+xcopy /Y /S "%OCCT_INSTALL%\win64\vc14\bind\*" "$(TargetDir)" 
