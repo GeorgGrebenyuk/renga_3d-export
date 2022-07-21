@@ -32,7 +32,11 @@ class renga_data
 public: 
 	renga_data(Renga::IApplicationPtr application, int mode);
 	std::map<int, object_3d_info> objects_3d_info;
+	//Сортировка объектов по уровням и по типам (и также для объектов вне уровня)
+	std::map<Renga::ILevelObjectPtr, std::map<GUID, std::vector<int>>> levels_objects;
+	std::map<GUID, std::vector<int>> non_levels_objects;
 private:
+	void start_sort_by_level_and_type();
 	void get_properties(Renga::IModelObjectPtr model_object);
 	//for materials and colors
 	void get_material(Renga::IModelObjectPtr model_object, Renga::Color* color, const char** material_name);

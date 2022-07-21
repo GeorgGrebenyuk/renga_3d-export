@@ -3,6 +3,7 @@
 #include "comutil.h"
 #include "Renga\ObjectTypes.h"
 #include "Renga\GridTypes.h"
+#include "general_data.hpp"
 //object_3d_info::object_3d_info(std::vector<const char*> material_names_data,
 //	std::vector<double> material_colors_data, std::vector<Renga::IGridPtr> geometry_data)
 
@@ -12,7 +13,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 	Renga::IProjectPtr project = application->Project;
 	Renga::IDataExporterPtr data_exporter = project->DataExporter;
 	Renga::IMaterialManagerPtr material_manager = project->MaterialManager;
-
+	this->start_sort_by_level_and_type();
 	if (mode == 1)
 	{
 		Renga::IGridWithMaterialCollectionPtr collection = data_exporter->GetGrids();
@@ -214,5 +215,58 @@ void renga_data::get_grids_color(GUID object_type, int grid_type, Renga::Color* 
 			//object_color = { 0.4,0.0,0.0 };
 			break;
 		}
+	}
+}
+void renga_data::start_sort_by_level_and_type()
+{
+	Renga::IProjectPtr project = renga_application->Project;
+	Renga::IModelObjectCollectionPtr model_objects_collection = project->Model->GetObjects();
+
+	std::map<Renga::ILevelObjectPtr, std::map<GUID, std::vector<int>>> levels_objects;
+	std::map<GUID, std::vector<int>> non_levels_objects;
+
+	std::vector<Renga::ILevelPtr> row_levels;
+	std::map<int, std::vector< Renga::IModelObjectPtr>>row_on_level_objects;
+	std::vector<Renga::IModelObjectPtr> row_non_level_objects;
+
+	for (int counter_objects = 0; counter_objects < model_objects_collection->Count; counter_objects++)
+	{
+		Renga::IModelObjectPtr model_object = model_objects_collection->GetByIndex(counter_objects);
+		GUID object_type = model_object->GetObjectType();
+
+		if (object_type == Renga::ObjectTypes::Level)
+		{
+			Renga::ILevelPtr level;
+			model_object->QueryInterface(&level);
+			row_levels.push_back(level);
+		}
+		else 
+		{
+			Renga::ILevelObjectPtr object_on_level;
+			model_object->QueryInterface(&object_on_level);
+			if (object_on_level)
+			{
+				int level_id = object_on_level->GetLevelId();
+				bool find_existed = false;
+				for (auto list_data : row_on_level_objects)
+				{
+					if (list_data.first == level_id) 
+					{
+						list_data.second.push_back(model_object);
+						find_existed = true;
+						break;
+					}
+				}
+				if (!find_existed) row_on_level_objects.insert(
+					std::pair<int, std::vector<Renga::IModelObjectPtr>>{level_id, { model_object }});
+			}
+			else 
+			{
+				row_non_level_objects.push_back(model_object);
+			}
+		}
+
+
+
 	}
 }
