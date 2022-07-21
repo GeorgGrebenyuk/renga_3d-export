@@ -30,6 +30,9 @@
     <ClInclude Include="renga_data.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="navisworks.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -44,5 +47,16 @@
     <ClCompile Include="renga_data.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="navisworks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="nwcreate.manifest">
+      <Filter>Resource Files</Filter>
+    </Manifest>
+    <Manifest Include="fbx.manifest">
+      <Filter>Resource Files</Filter>
+    </Manifest>
   </ItemGroup>
 </Project>

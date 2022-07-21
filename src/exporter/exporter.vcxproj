@@ -124,13 +124,22 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\include\nwcreate;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\lib\x64;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nwcreate_19.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)\nwcreate" /Y /I /E
+</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwcreate\nwcreate.manifest"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -142,7 +151,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\include\nwcreate;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,18 +159,29 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\lib\x64;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nwcreate_19.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)\nwcreate" /Y /I /E
+</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwcreate\nwcreate.manifest"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="external_functions.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="general_data.hpp" />
+    <ClInclude Include="navisworks.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="renga_data.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="handler_function.cpp" />
+    <ClCompile Include="navisworks.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -169,6 +189,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="renga_data.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="fbx.manifest" />
+    <Manifest Include="nwcreate.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
