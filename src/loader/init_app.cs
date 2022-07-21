@@ -4,10 +4,6 @@ using System;
 
 namespace loader
 {
-    public static class LibraryExporter
-    {
-
-    } 
     public class init_app : Renga.IPlugin
     {
         //User_selections
@@ -31,9 +27,15 @@ namespace loader
         /// Какой формат был выбран для экспорта
         /// </summary>
         public static int export_format = 0;
-
-        [DllImport("exporter", CallingConvention = CallingConvention.StdCall, ExactSpelling = false,
-    EntryPoint = "run_exporter")]
+        /// <summary>
+        /// Загрузка моей внешней C++ библиотеки, которая будет выполнять действия по геометрическому преобразованию объектов
+        /// </summary>
+        /// <param name="use_hidden"></param>
+        /// <param name="use_max_triangles"></param>
+        /// <param name="recalc"></param>
+        /// <param name="export_mode"></param>
+        /// <param name="export_format"></param>
+        [DllImport("exporter", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "run_exporter")]
         private static extern void run_exporter(bool use_hidden, int use_max_triangles,
     bool recalc, int export_mode, int export_format);
 
