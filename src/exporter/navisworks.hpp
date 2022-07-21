@@ -7,5 +7,6 @@ public:
 	navisworks(renga_data* data);
 private:
 	void start();
+	renga_data* project_data;
 };
 
