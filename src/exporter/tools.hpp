@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include <cmath>
 static bool compare_levels(Renga::IModelObjectPtr l1, Renga::IModelObjectPtr l2) {
 
 	Renga::ILevelPtr pLevel1;
@@ -9,9 +10,13 @@ static bool compare_levels(Renga::IModelObjectPtr l1, Renga::IModelObjectPtr l2)
 
 	assert(pLevel1 != nullptr);
 	assert(pLevel2 != nullptr);
-	double l1_h = pLevel1->GetElevation();
-	double l2_h = pLevel2->GetElevation();
-	return l1_h <= l2_h;
+	double l1_h = round(pLevel1->GetElevation() * 1000) / 1000;
+	double l2_h = round(pLevel2->GetElevation() * 1000) / 1000;
+	bstr_t l1_name = pLevel1->LevelName;
+	bstr_t l2_name = pLevel2->LevelName;
+
+	if (l1_h == l2_h) return true;
+	else return l1_h <= l2_h;
 }
 const char* get_type_as_str(GUID obj_type)
 {
@@ -65,6 +70,7 @@ const char* get_type_as_str(GUID obj_type)
 }
 static void sort_objects(std::vector<Renga::IModelObjectPtr>*level_objects, std::map<const char*, std::vector<int>>* type2objects)
 {
+	std::map<const char*, std::vector<int>>::iterator check_objects;
 	for (Renga::IModelObjectPtr one_object : *level_objects)
 	{
 		//GUID object_type = one_object->GetObjectType();
@@ -72,17 +78,12 @@ static void sort_objects(std::vector<Renga::IModelObjectPtr>*level_objects, std:
 		if ((*type2objects).empty())  (*type2objects).insert(std::pair< const char*, std::vector<int>>{object_type, { one_object->Id }});
 		else
 		{
-			bool is_find_that = false;
-			for (auto data : (*type2objects))
+			check_objects = (*type2objects).find(object_type);
+			if (check_objects != (*type2objects).end())
 			{
-				if (data.first == object_type)
-				{
-					data.second.push_back(one_object->Id);
-					is_find_that = true;
-					break;
-				}
+				check_objects->second.push_back(one_object->Id);
 			}
-			if (!is_find_that) (*type2objects).insert(std::pair< const char*, std::vector<int>>{object_type, { one_object->Id }});
+			else (*type2objects).insert(std::pair< const char*, std::vector<int>>{object_type, { one_object->Id }});
 		}
 	}
 }
