@@ -13,5 +13,5 @@
 /// <param name="export_mode">1 = use grids, 0 = use objects 3d</param>
 /// <param name="export_format">0 = nwc, 1 = fbx</param>
 /// <returns></returns>
-extern "C" void EXPORT_3D_FUNCTIONS_API __stdcall run_exporter(bool use_hidden, int use_max_triangles,
+extern "C" int32_t EXPORT_3D_FUNCTIONS_API __stdcall run_exporter(bool use_hidden, int use_max_triangles,
 	bool recalc, int export_mode, int export_format);
