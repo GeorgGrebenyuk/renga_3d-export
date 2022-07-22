@@ -5,8 +5,7 @@
 #include "Renga\GridTypes.h"
 #include "general_data.hpp"
 #include "tools.hpp"
-//object_3d_info::object_3d_info(std::vector<const char*> material_names_data,
-//	std::vector<double> material_colors_data, std::vector<Renga::IGridPtr> geometry_data)
+
 
 renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 {
@@ -14,6 +13,9 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 	Renga::IProjectPtr project = application->Project;
 	Renga::IDataExporterPtr data_exporter = project->DataExporter;
 	Renga::IMaterialManagerPtr material_manager = project->MaterialManager;
+
+	bstr_t file_path = project->FilePath;
+	this->project_path = file_path;
 	this->start_sort_by_level_and_type();
 	if (mode == 1)
 	{
@@ -26,7 +28,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 
 			//create objects_3d_info definition
 			std::vector<const char*> material_names{ material->Name};
-			std::vector<Renga::Color> material_colors{ color_info };
+			std::vector<std::vector<unsigned short>> material_colors{ {color_info.Red, color_info.Green, color_info.Blue, color_info.Alpha} };
 			std::vector<Renga::IGridPtr> geometry{ grid2material->Grid };
 
 			object_3d_info object_data(material_names, material_colors, geometry);
@@ -42,7 +44,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 		{
 			//create objects_3d_info definition
 			std::vector<const char*> material_names;
-			std::vector<Renga::Color> material_colors;
+			std::vector<std::vector<unsigned short>> material_colors;
 			std::vector<Renga::IGridPtr> geometry;
 
 			Renga::IExportedObject3DPtr object_3d_geometry = objects_3d_collection->Get(counter_objects);
@@ -77,11 +79,13 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 					}
 
 					material_names.push_back(material_name);
-					material_colors.push_back(color);
+					material_colors.push_back({ color.Red, color.Green, color.Blue, color.Alpha });
 					geometry.push_back(object_grid);
 				}
 			}
 			object_3d_info object_data(material_names, material_colors, geometry);
+			object_data.object_name = object_name;
+			object_data.object_guid = object_internal_id;
 			this->objects_3d_info.insert(std::pair<int, object_3d_info>{object_3d_geometry->GetModelObjectId(), object_data});
 		}
 	}
@@ -276,11 +280,11 @@ void renga_data::start_sort_by_level_and_type()
 		Renga::ILevelPtr level;
 		one_level->QueryInterface(&level);
 
-		std::map<GUID, std::vector<int>> type2objects;
+		std::map<const char*, std::vector<int>> type2objects;
 		std::vector<Renga::IModelObjectPtr> level_objects = row_on_level_objects[one_level->GetId()];
 
 		sort_objects(&level_objects, &type2objects);
-		this->levels_objects.insert(std::pair<Renga::ILevelPtr, std::map<GUID, std::vector<int>>>{level, type2objects});
+		this->levels_objects.insert(std::pair<Renga::ILevelPtr, std::map<const char*, std::vector<int>>>{level, type2objects});
 	}
 	//—ќртировка по типу среди внеуровневых
 	sort_objects(&row_non_level_objects, &(this->non_levels_objects));
