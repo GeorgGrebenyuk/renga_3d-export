@@ -18,6 +18,8 @@ namespace loader
         {
             InitializeComponent();
             textBox_entering_max_triangles.Text = init_app.max_triangles_count.ToString();
+
+            radioButton1.Checked = true;
         }
 
         private void checkBox1_use_hidded_CheckedChanged(object sender, EventArgs e)
@@ -56,9 +58,11 @@ namespace loader
             {
                 radioButton_grids.Enabled = false;
                 checkBox_use_max_triangles.Enabled = false;
+                radioButton_objects.Checked = true;
             }
             else
             {
+                radioButton_objects.Checked = false;
                 radioButton_grids.Enabled = true;
                 checkBox_use_max_triangles.Enabled = true;
             }
@@ -96,6 +100,7 @@ namespace loader
 
         private void button1_Click(object sender, EventArgs e)
         {
+            
             //Считывание предустановленных параметров
             if (checkBox1_use_hidded.Checked) init_app.use_hidded_objects = true;
             else init_app.use_hidded_objects = false;
