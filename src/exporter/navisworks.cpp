@@ -23,28 +23,41 @@ navisworks::navisworks(renga_data* data)
 void navisworks::start() {
 
 	LcNwcScene scene;
+	const size_t cSize = strlen(this->project_data->project_path) + 1;
+	wchar_t* wc = new wchar_t[cSize];
+	mbstowcs(wc, this->project_data->project_path, cSize);
+	LtWideString wfilename = wc;
 
-	LtWideString wfilename = this->data->file_export_path.c_str();
 	//Getting geometry, properties, materials ...
-	Renga::IDataExporterPtr pDataExporter = this->data->r_project->GetDataExporter();
-	Renga::IExportedObject3DCollectionPtr objects_collection3d = pDataExporter->GetObjects3D();
-	Renga::IModelObjectCollectionPtr objects_collection = this->data->r_project->GetModel()->GetObjects();
+	for (auto level_info : this->project_data->levels_objects)
+	{
+		Renga::ILevelPtr level_object = level_info.first;
+		LcNwcGroup levels_objects;
+		levels_objects.SetName(level_object->LevelName);
+		levels_objects.SetLayer(TRUE);
 
-	int all_objects_3d = objects_collection3d->GetCount();
-	std::cout << "\n\nStart export to NWC\n\n" << std::endl;
+		for (auto type2objects : level_info.second)
+		{
+			const char* group_name = get_type_as_str(type2objects.first);
+			bstr_t group_name_str = group_name;
+			LcNwcGroup object_type_group;
+			object_type_group.SetName(group_name_str);
+			object_type_group.SetLayer(TRUE);
 
+			for (int model_object_id : type2objects.second)
+			{
+				object_3d_info info = this->project_data->objects_3d_info[model_object_id];
+			}
 
-	//std::cout << "end sort objects on levels" << std::endl;
-	int counter_objects = 0;
+		}
+	}
 	for (level_objects one_group : this->data->level2objects)
 	{
 		Renga::IModelObjectPtr level_object = this->data->id2level[one_group.level_model_id];
 		Renga::ILevelPtr level_instanse;
 		level_object->QueryInterface(&level_instanse);
 
-		LcNwcGroup levels_objects;
-		levels_objects.SetName(level_instanse->LevelName);
-		levels_objects.SetLayer(TRUE);
+
 
 
 		for (int obj : one_group.objects)
