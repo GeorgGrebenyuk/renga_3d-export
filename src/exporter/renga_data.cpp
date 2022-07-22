@@ -5,6 +5,7 @@
 #include "Renga\GridTypes.h"
 #include "general_data.hpp"
 #include "tools.hpp"
+#include <algorithm>
 
 
 renga_data::renga_data(Renga::IApplicationPtr application, int mode)
@@ -14,10 +15,26 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 	Renga::IDataExporterPtr data_exporter = project->DataExporter;
 	Renga::IMaterialManagerPtr material_manager = project->MaterialManager;
 
-	bstr_t file_path = project->FilePath;
-	this->project_path = file_path;
+	std::wstring current_project_path(project->FilePath, SysStringLen(project->FilePath));
+	std::string current_project_path_str(current_project_path.begin(), current_project_path.end());
+
+	std::string extension = "";
+	switch (export_formats)
+	{
+	case 0:
+		extension = ".nwc";
+		break;
+	case 1:
+		extension = ".fbx";
+		break;
+	}
+
+	std::string renga_ext = ".rnp";
+	current_project_path_str.replace(current_project_path_str.find(renga_ext), renga_ext.length(), extension);
+	std::wstring new_path(current_project_path_str.begin(), current_project_path_str.end());
+	this->project_path = new_path;
 	this->start_sort_by_level_and_type();
-	if (mode == 1)
+	if (mode == 0)
 	{
 		Renga::IGridWithMaterialCollectionPtr collection = data_exporter->GetGrids();
 		for (int objects_counter = 0; objects_counter < collection->Count; objects_counter++)
@@ -27,7 +44,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 			Renga::Color color_info = material->GetColor();
 
 			//create objects_3d_info definition
-			std::vector<const char*> material_names{ material->Name};
+			std::vector<bstr_t> material_names{ material->Name};
 			std::vector<std::vector<unsigned short>> material_colors{ {color_info.Red, color_info.Green, color_info.Blue, color_info.Alpha} };
 			std::vector<Renga::IGridPtr> geometry{ grid2material->Grid };
 
@@ -43,43 +60,56 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 		for (int counter_objects = 0; counter_objects < objects_3d_collection->Count; counter_objects++) 
 		{
 			//create objects_3d_info definition
-			std::vector<const char*> material_names;
+			std::vector<bstr_t> material_names;
 			std::vector<std::vector<unsigned short>> material_colors;
 			std::vector<Renga::IGridPtr> geometry;
 
 			Renga::IExportedObject3DPtr object_3d_geometry = objects_3d_collection->Get(counter_objects);
 			Renga::IModelObjectPtr model_object = model_objects_collection->GetById(object_3d_geometry->GetModelObjectId());
 			GUID obj_type = model_object->GetObjectType();
-			const char* object_name = model_object->GetName();
-			const char* object_internal_id((const char*)model_object->GetUniqueIdS());
+			bstr_t object_name = model_object->GetName();
+			bstr_t object_internal_id = model_object->GetUniqueIdS();
 
-			Renga::Color color;
-			const char* material_name = "-";
-			color.Red = 0;
-			color.Green = 0;
-			color.Blue = 0;
+			Renga::Color color_object;
+			bstr_t material_name = "-";
+			color_object.Red = 0;
+			color_object.Green = 0;
+			color_object.Blue = 0;
+			color_object.Alpha = 255;
 			
-			if (obj_type == Renga::ObjectTypes::Route) this->get_style(model_object, &color);
-			else this->get_material(model_object, &color, &material_name);
+			if (obj_type == Renga::ObjectTypes::Route) this->get_style(model_object, &color_object);
+			else if (obj_type == Renga::ObjectTypes::Room)
+			{
+				color_object.Red = 128;
+				color_object.Green= 128;
+				color_object.Blue = 128;
+				color_object.Alpha = 255;
+				bstr_t material_name = "Условный серый";
+			}
+			else this->get_material(model_object, &color_object, &material_name);
 
 			for (int counter_meshes = 0; counter_meshes < object_3d_geometry->GetMeshCount(); counter_meshes++)
 			{
 				Renga::IMeshPtr object_mesh = object_3d_geometry->GetMesh(counter_meshes);
+				Renga::Color color_mesh;
 				if (obj_type == Renga::ObjectTypes::Wall | obj_type == Renga::ObjectTypes::Roof | obj_type == Renga::ObjectTypes::Floor)
 				{
-					this->get_layered_material(counter_meshes, model_object, &color, &material_name);
+					this->get_layered_material(counter_meshes, model_object, &color_mesh, &material_name);
 				}
+				else color_mesh = color_object;
 
 				for (int counter_grids = 0; counter_grids < object_mesh->GetGridCount(); counter_grids++)
 				{
+					Renga::Color color_grid;
 					Renga::IGridPtr object_grid = object_mesh->GetGrid(counter_grids);
 					if (obj_type == Renga::ObjectTypes::Window | obj_type == Renga::ObjectTypes::Door)
 					{
-						this->get_grids_color(obj_type, object_grid->GetGridType(), &color);
+						this->get_grids_color(obj_type, object_grid->GetGridType(), &color_grid);
 					}
+					else color_grid = color_mesh;
 
 					material_names.push_back(material_name);
-					material_colors.push_back({ color.Red, color.Green, color.Blue, color.Alpha });
+					material_colors.push_back({ color_grid.Red, color_grid.Green, color_grid.Blue, color_grid.Alpha });
 					geometry.push_back(object_grid);
 				}
 			}
@@ -90,8 +120,12 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 		}
 	}
 }
-void renga_data::get_material(Renga::IModelObjectPtr model_object, Renga::Color* color, const char** material_name)
+void renga_data::get_material(Renga::IModelObjectPtr model_object, Renga::Color* color, bstr_t* material_name)
 {
+	(*color).Red = 0;
+	(*color).Green = 0;
+	(*color).Blue = 0;
+	(*color).Alpha = 255;
 	Renga::IObjectWithMaterialPtr one_material;
 	model_object->QueryInterface(&one_material);
 	if (one_material)
@@ -108,8 +142,12 @@ void renga_data::get_material(Renga::IModelObjectPtr model_object, Renga::Color*
 
 	}
 }
-void renga_data::get_layered_material(int sub_object_position, Renga::IModelObjectPtr model_object, Renga::Color* color, const char** material_name)
+void renga_data::get_layered_material(int sub_object_position, Renga::IModelObjectPtr model_object, Renga::Color* color, bstr_t* material_name)
 {
+	(*color).Red = 0;
+	(*color).Green = 0;
+	(*color).Blue = 0;
+	(*color).Alpha = 255;
 	Renga::IObjectWithLayeredMaterialPtr some_materials;
 	model_object->QueryInterface(&some_materials);
 	if (some_materials)
@@ -125,11 +163,22 @@ void renga_data::get_layered_material(int sub_object_position, Renga::IModelObje
 				(*color) = material->GetColor();
 				(*material_name) = material->GetName();
 			}
+			else 
+			{
+				material = renga_application->Project->MaterialManager->GetMaterial(materials->Get(0)->MaterialId);
+				(*color) = material->GetColor();
+				(*material_name) = material->GetName();
+			}
+
 		}
 	}
 }
 void renga_data::get_style(Renga::IModelObjectPtr model_object, Renga::Color* color)
 {
+	(*color).Red = 0;
+	(*color).Green = 0;
+	(*color).Blue = 0;
+	(*color).Alpha = 255;
 	GUID type = model_object->GetObjectType();
 	
 	if (type == Renga::ObjectTypes::Route)
@@ -150,6 +199,7 @@ void renga_data::get_style(Renga::IModelObjectPtr model_object, Renga::Color* co
 }
 void renga_data::get_grids_color(GUID object_type, int grid_type, Renga::Color* color)
 {
+	(*color).Alpha = 255;
 	if (object_type == Renga::ObjectTypes::Window)
 	{
 		switch (grid_type)
@@ -164,6 +214,7 @@ void renga_data::get_grids_color(GUID object_type, int grid_type, Renga::Color* 
 			(*color).Red = 194;
 			(*color).Green = 246;
 			(*color).Blue = 237;
+			(*color).Alpha = 153;
 			//object_color = { 0.760,0.964,0.929 };
 			//transparency = 0.6;
 			break;
@@ -192,19 +243,20 @@ void renga_data::get_grids_color(GUID object_type, int grid_type, Renga::Color* 
 			(*color).Red = 194;
 			(*color).Green = 246;
 			(*color).Blue = 237;
+			(*color).Alpha = 153;
 			//object_color = { 0.760,0.964,0.929 };
 			//transparency = 0.6;
 			break;
 		case Renga::GridTypes::Door::Frame:
-			(*color).Red = 102;
-			(*color).Green = 51;
-			(*color).Blue = 255;
+			(*color).Red = 153;
+			(*color).Green = 153;
+			(*color).Blue = 0;
 			//object_color = { 0.4,0.2,1.0 };
 			break;
 		case Renga::GridTypes::Door::Solid:
-			(*color).Red = 102;
-			(*color).Green = 51;
-			(*color).Blue = 255;
+			(*color).Red = 153;
+			(*color).Green = 153;
+			(*color).Blue = 0;
 			//object_color = { 0.4,0.2,0.0 };
 			break;
 		case Renga::GridTypes::Door::DoorLining:
@@ -226,18 +278,37 @@ void renga_data::start_sort_by_level_and_type()
 {
 	Renga::IProjectPtr project = renga_application->Project;
 	Renga::IModelObjectCollectionPtr model_objects_collection = project->Model->GetObjects();
+	Renga::IExportedObject3DCollectionPtr objects3d_collection = project->DataExporter->GetObjects3D();
 
 	//std::map<Renga::ILevelPtr, std::map<GUID, std::vector<int>>> levels_objects;
 	//std::map<GUID, std::vector<int>> non_levels_objects;
 
+	//Учитываем только объекты модели, у которых можно достать геометрию (кроме уровней*)
+	std::vector<int> only_geometry_objects;
+	for (int counter_object3d = 0; counter_object3d < objects3d_collection->Count; counter_object3d++)
+	{
+		Renga::IExportedObject3DPtr obj = objects3d_collection->Get(counter_object3d);
+		only_geometry_objects.push_back(obj->GetModelObjectId());
+	}
+
 	std::list<Renga::IModelObjectPtr> row_levels;
 	std::map<int, std::vector< Renga::IModelObjectPtr>>row_on_level_objects;
-	std::vector<Renga::IModelObjectPtr> row_non_level_objects;
+	std::map<int, std::vector< Renga::IModelObjectPtr>>::iterator check_level_objects;
 
+	std::vector<Renga::IModelObjectPtr> row_non_level_objects;
 	for (int counter_objects = 0; counter_objects < model_objects_collection->Count; counter_objects++)
 	{
+
 		Renga::IModelObjectPtr model_object = model_objects_collection->GetByIndex(counter_objects);
 		GUID object_type = model_object->GetObjectType();
+		bool is_object_have_geometry = false;
+
+		if (std::find(only_geometry_objects.begin(), only_geometry_objects.end(), model_object->Id) != only_geometry_objects.end()) {
+			is_object_have_geometry = true;
+		}
+		else {
+			is_object_have_geometry = false;
+		}
 
 		if (object_type == Renga::ObjectTypes::Level)
 		{
@@ -245,24 +316,19 @@ void renga_data::start_sort_by_level_and_type()
 			model_object->QueryInterface(&level);
 			row_levels.push_back(model_object);
 		}
-		else 
+		else if (is_object_have_geometry)
 		{
 			Renga::ILevelObjectPtr object_on_level;
 			model_object->QueryInterface(&object_on_level);
 			if (object_on_level)
 			{
 				int level_id = object_on_level->GetLevelId();
-				bool find_existed = false;
-				for (auto list_data : row_on_level_objects)
+				check_level_objects = row_on_level_objects.find(level_id);
+				if (check_level_objects != row_on_level_objects.end())
 				{
-					if (list_data.first == level_id) 
-					{
-						list_data.second.push_back(model_object);
-						find_existed = true;
-						break;
-					}
+					check_level_objects->second.push_back(model_object);
 				}
-				if (!find_existed) row_on_level_objects.insert(
+				else row_on_level_objects.insert(
 					std::pair<int, std::vector<Renga::IModelObjectPtr>>{level_id, { model_object }});
 			}
 			else 
@@ -274,7 +340,7 @@ void renga_data::start_sort_by_level_and_type()
 	//Сортируем уровни
 	row_levels.sort(compare_levels);
 	//Начинаем сортировку объектов по уровню
-	std::map<int, std::vector< Renga::IModelObjectPtr>>row2_on_level_objects;
+
 	for (Renga::IModelObjectPtr one_level : row_levels)
 	{
 		Renga::ILevelPtr level;
