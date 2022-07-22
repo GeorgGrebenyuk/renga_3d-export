@@ -11,6 +11,7 @@
 #include "list"
 #include "vector"
 #include "map"
+#include "string"
 
 #include "framework.h"
 #import "RengaCOMAPI.tlb"

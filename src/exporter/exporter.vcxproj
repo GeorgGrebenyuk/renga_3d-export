@@ -179,6 +179,7 @@ copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwc
     <ClInclude Include="navisworks.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="renga_data.hpp" />
+    <ClInclude Include="tools.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
