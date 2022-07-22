@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "navisworks.hpp"
-#include "nwcreate\LiNwcAll.h"
+
+
+#define LI_NWC_NO_PROGRESS_CALLBACKS NULL
+#define LI_NWC_NO_USER_DATA NULL
 navisworks::navisworks(renga_data* data)
 {
 	this->project_data = data;
@@ -20,66 +23,88 @@ navisworks::navisworks(renga_data* data)
 		status = 2;
 	}
 }
+void navisworks::parse_level_objects(std::map<const char*, std::vector<int>>* data, LcNwcGroup* to_record)
+{
+	for (auto type2objects : *data)
+	{
+		const char* group_name = type2objects.first;
+		bstr_t group_name_str = group_name;
+		LcNwcGroup object_type_group;
+		object_type_group.SetName(group_name_str);
+		object_type_group.SetLayer(TRUE);
+
+		for (int model_object_id : type2objects.second)
+		{
+			object_3d_info info = this->project_data->objects_3d_info[model_object_id];
+			LcNwcGroup object_nwc;
+			bstr_t object_name_str = info.object_name;
+			object_nwc.SetName(object_name_str);
+			object_nwc.SetLayer(TRUE);
+			//Geometry
+			for (int counter_sub_geometry = 0; counter_sub_geometry < info.geometry.size(); counter_sub_geometry++)
+			{
+				Renga::IGridPtr sub_grid = info.geometry[counter_sub_geometry];
+				std::vector<unsigned short> sub_color = info.material_colors[counter_sub_geometry];
+				bstr_t sub_material_name = info.material_names[counter_sub_geometry];
+
+				LcNwcGeometry grid_data;
+				grid_data.SetName(L"GRID");
+
+				LcNwcMaterial body_material;
+				body_material.SetDiffuseColor(sub_color[0] / 255.0, sub_color[1] / 255.0, sub_color[2] / 255.0);
+				body_material.SetAmbientColor(sub_color[0] / 255.0, sub_color[1] / 255.0, sub_color[2] / 255.0);
+				body_material.SetName(sub_material_name);
+				body_material.SetTransparency(sub_color[3] / 100.0);
+				grid_data.AddAttribute(body_material);
+
+				std::vector<Renga::FloatPoint3D> points;
+				for (int counter_points = 0; counter_points < sub_grid->GetVertexCount(); counter_points++)
+				{
+					points.push_back(sub_grid->GetVertex(counter_points));
+				}
+				LcNwcGeometryStream stream_grid_record = grid_data.OpenStream();
+				for (int counter_triangles = 0; counter_triangles < sub_grid->GetTriangleCount(); counter_triangles++)
+				{
+					Renga::Triangle tr = sub_grid->GetTriangle(counter_triangles);
+					stream_grid_record.Begin(LI_NWC_VERTEX_NONE);
+					Renga::FloatPoint3D p1 = points[tr.V0];
+					Renga::FloatPoint3D p2 = points[tr.V1];
+					Renga::FloatPoint3D p3 = points[tr.V2];
+					stream_grid_record.TriFanVertex(p1.X / 1000.0, p1.Y / 1000.0, p1.Z / 1000.0);
+					stream_grid_record.TriFanVertex(p2.X / 1000.0, p2.Y / 1000.0, p2.Z / 1000.0);
+					stream_grid_record.TriFanVertex(p3.X / 1000.0, p3.Y / 1000.0, p3.Z / 1000.0);
+					stream_grid_record.End();
+				}
+				grid_data.CloseStream(stream_grid_record);
+				object_nwc.AddNode(grid_data);
+			}
+			object_type_group.AddNode(object_nwc);
+		}
+		(*to_record).AddNode(object_type_group);
+	}
+
+}
 void navisworks::start() {
 
 	LcNwcScene scene;
-	const size_t cSize = strlen(this->project_data->project_path) + 1;
-	wchar_t* wc = new wchar_t[cSize];
-	mbstowcs(wc, this->project_data->project_path, cSize);
-	LtWideString wfilename = wc;
+	bstr_t file_path = this->project_data->project_path;
+	LtWideString wfilename = file_path;
 
 	//Getting geometry, properties, materials ...
 	for (auto level_info : this->project_data->levels_objects)
 	{
 		Renga::ILevelPtr level_object = level_info.first;
+
 		LcNwcGroup levels_objects;
 		levels_objects.SetName(level_object->LevelName);
 		levels_objects.SetLayer(TRUE);
-
-		for (auto type2objects : level_info.second)
-		{
-			const char* group_name = get_type_as_str(type2objects.first);
-			bstr_t group_name_str = group_name;
-			LcNwcGroup object_type_group;
-			object_type_group.SetName(group_name_str);
-			object_type_group.SetLayer(TRUE);
-
-			for (int model_object_id : type2objects.second)
-			{
-				object_3d_info info = this->project_data->objects_3d_info[model_object_id];
-			}
-
-		}
-	}
-	for (level_objects one_group : this->data->level2objects)
-	{
-		Renga::IModelObjectPtr level_object = this->data->id2level[one_group.level_model_id];
-		Renga::ILevelPtr level_instanse;
-		level_object->QueryInterface(&level_instanse);
-
-
-
-
-		for (int obj : one_group.objects)
-		{
-			Renga::IModelObjectPtr obj_model = objects_collection->GetById(objects_collection3d->Get(obj)->GetModelObjectId());
-			tools::log_status_work(all_objects_3d, counter_objects, "writing", obj_model->GetName());
-			navis_object::navis_object(this->data->r_project, &this->data->grids_collection_in_meshes.at(obj), &levels_objects, obj_model);
-			counter_objects++;
-		}
+		parse_level_objects(&level_info.second, &levels_objects);
 		scene.AddNode(levels_objects);
 	}
-
 	LcNwcGroup non_levels_objects;
-	non_levels_objects.SetName(L"Models objects");
-	non_levels_objects.SetLayer(TRUE);
-	for (int obj : this->data->non_level_objects)
-	{
-		Renga::IModelObjectPtr obj_model = objects_collection->GetById(objects_collection3d->Get(obj)->GetModelObjectId());
-		tools::log_status_work(all_objects_3d, counter_objects, "writing", obj_model->GetName());
-		navis_object::navis_object(this->data->r_project, &this->data->grids_collection_in_meshes.at(obj), &non_levels_objects, obj_model);
-		counter_objects++;
-	}
+	parse_level_objects(&this->project_data->non_levels_objects, &non_levels_objects);
 	scene.AddNode(non_levels_objects);
+	
+	scene.WriteCache(L"", wfilename, LI_NWC_NO_PROGRESS_CALLBACKS, LI_NWC_NO_USER_DATA);
 
 }
