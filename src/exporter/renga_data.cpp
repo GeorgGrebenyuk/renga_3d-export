@@ -4,6 +4,7 @@
 #include "Renga\ObjectTypes.h"
 #include "Renga\GridTypes.h"
 #include "general_data.hpp"
+#include "tools.hpp"
 //object_3d_info::object_3d_info(std::vector<const char*> material_names_data,
 //	std::vector<double> material_colors_data, std::vector<Renga::IGridPtr> geometry_data)
 
@@ -222,10 +223,10 @@ void renga_data::start_sort_by_level_and_type()
 	Renga::IProjectPtr project = renga_application->Project;
 	Renga::IModelObjectCollectionPtr model_objects_collection = project->Model->GetObjects();
 
-	std::map<Renga::ILevelObjectPtr, std::map<GUID, std::vector<int>>> levels_objects;
-	std::map<GUID, std::vector<int>> non_levels_objects;
+	//std::map<Renga::ILevelPtr, std::map<GUID, std::vector<int>>> levels_objects;
+	//std::map<GUID, std::vector<int>> non_levels_objects;
 
-	std::vector<Renga::ILevelPtr> row_levels;
+	std::list<Renga::IModelObjectPtr> row_levels;
 	std::map<int, std::vector< Renga::IModelObjectPtr>>row_on_level_objects;
 	std::vector<Renga::IModelObjectPtr> row_non_level_objects;
 
@@ -238,7 +239,7 @@ void renga_data::start_sort_by_level_and_type()
 		{
 			Renga::ILevelPtr level;
 			model_object->QueryInterface(&level);
-			row_levels.push_back(level);
+			row_levels.push_back(model_object);
 		}
 		else 
 		{
@@ -265,8 +266,22 @@ void renga_data::start_sort_by_level_and_type()
 				row_non_level_objects.push_back(model_object);
 			}
 		}
-
-
-
 	}
+	//Сортируем уровни
+	row_levels.sort(compare_levels);
+	//Начинаем сортировку объектов по уровню
+	std::map<int, std::vector< Renga::IModelObjectPtr>>row2_on_level_objects;
+	for (Renga::IModelObjectPtr one_level : row_levels)
+	{
+		Renga::ILevelPtr level;
+		one_level->QueryInterface(&level);
+
+		std::map<GUID, std::vector<int>> type2objects;
+		std::vector<Renga::IModelObjectPtr> level_objects = row_on_level_objects[one_level->GetId()];
+
+		sort_objects(&level_objects, &type2objects);
+		this->levels_objects.insert(std::pair<Renga::ILevelPtr, std::map<GUID, std::vector<int>>>{level, type2objects});
+	}
+	//СОртировка по типу среди внеуровневых
+	sort_objects(&row_non_level_objects, &(this->non_levels_objects));
 }
