@@ -4,6 +4,7 @@
 static int max_triangles = 0;
 static bool use_recalc = false;
 static bool use_hidded = true;
+static int export_formats = 0;
 
 //const std::list<GUID> c_levelTreeTypes =
 //{
