@@ -124,18 +124,17 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;%SDK_NWCREATE%\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\lib\x64;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>nwcreate_19.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%SDK_NWCREATE%\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nwcreate_18.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)\nwcreate" /Y /I /E
-</Command>
+      <Command>xcopy "$(SDK_NWCREATE)\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)\nwcreate" /Y /I /E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>if not exist "$(SolutionDir)x64\$(Configuration)\nwcreate" mkdir "$(SolutionDir)x64\$(Configuration)\nwcreate"
@@ -152,7 +151,7 @@ copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwc
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;%SDK_NWCREATE%\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -160,12 +159,11 @@ copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwc
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\lib\x64;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>nwcreate_19.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%SDK_NWCREATE%\lib\x64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>nwcreate_18.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "G:\30_Coding\SDK\Navisworks 2022\api\nwcreate\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)\nwcreate" /Y /I /E
-</Command>
+      <Command>xcopy "$(SDK_NWCREATE)\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)\nwcreate" /Y /I /E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>if not exist "$(SolutionDir)x64\$(Configuration)\nwcreate" mkdir "$(SolutionDir)x64\$(Configuration)\nwcreate"
