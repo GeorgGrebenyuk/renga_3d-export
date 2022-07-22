@@ -7,6 +7,7 @@ namespace loader
     public class init_app : Renga.IPlugin
     {
         //User_selections
+        Renga.ActionEventSource follow_action;
         /// <summary>
         /// Учитывать или нет скрытые пользователем объекты на виде
         /// </summary>
@@ -27,6 +28,18 @@ namespace loader
         /// Какой формат был выбран для экспорта
         /// </summary>
         public static int export_format = 0;
+        public class ExporterImport
+        {
+            [DllImport("exporter", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "run_exporter")]
+            private static extern int run_exporter(bool use_hidden, int use_max_triangles,
+    bool recalc, int export_mode, int export_format);
+
+            public int run_exporter_run(bool use_hidden, int use_max_triangles,
+    bool recalc, int export_mode, int export_format)
+            {
+                return run_exporter(use_hidden, use_max_triangles, recalc, export_mode, export_format);
+            }
+        }
         /// <summary>
         /// Загрузка моей внешней C++ библиотеки, которая будет выполнять действия по геометрическому преобразованию объектов
         /// </summary>
@@ -35,11 +48,7 @@ namespace loader
         /// <param name="recalc"></param>
         /// <param name="export_mode"></param>
         /// <param name="export_format"></param>
-        [DllImport("exporter", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "run_exporter")]
-        private static extern void run_exporter(bool use_hidden, int use_max_triangles,
-    bool recalc, int export_mode, int export_format);
-
-        Renga.ActionEventSource follow_action;
+        
         public bool Initialize(string pluginFolder)
         {
             Renga.Application renga_app = new Renga.Application();
@@ -59,7 +68,8 @@ namespace loader
                 ConfigureTool window = new ConfigureTool();
                 System.Windows.Forms.Application.Run(window);
                 window.Close();
-                run_exporter(use_hidded_objects, max_triangles_count, use_recalc_coordinates, export_mode, export_format);
+                int wait = new ExporterImport().run_exporter_run(use_hidded_objects, max_triangles_count, use_recalc_coordinates, export_mode, export_format);
+                int uu = 0;
             };
 
             panel.AddToolButton(our_button);
