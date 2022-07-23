@@ -58,14 +58,14 @@ namespace loader
             if (radioButton1.Checked)
             {
                 radioButton_grids.Enabled = false;
-                checkBox_use_max_triangles.Enabled = false;
+                //checkBox_use_max_triangles.Enabled = false;
                 radioButton_objects.Checked = true;
             }
             else
             {
                 radioButton_objects.Checked = false;
                 radioButton_grids.Enabled = true;
-                checkBox_use_max_triangles.Enabled = true;
+                //checkBox_use_max_triangles.Enabled = true;
             }
         }
 
@@ -107,8 +107,14 @@ namespace loader
             else init_app.use_hidded_objects = false;
             if (checkBox_use_coords_recacl.Checked) init_app.use_recalc_coordinates = true;
             else init_app.use_recalc_coordinates = false;
-            if (Convert.ToInt32(textBox_entering_max_triangles.Text) > 0) init_app.max_triangles_count = Convert.ToInt32(textBox_entering_max_triangles.Text);
-            else init_app.max_triangles_count = -1;
+
+            if (checkBox_use_max_triangles.Checked)
+            {
+                if (Convert.ToInt32(textBox_entering_max_triangles.Text) >= 1) init_app.max_triangles_count = Convert.ToInt32(textBox_entering_max_triangles.Text);
+                else init_app.max_triangles_count = -1;
+            }
+            
+            
 
             if (radioButton1.Checked) init_app.export_format = 0;
             else if (radioButton2.Checked) init_app.export_format = 1;
@@ -122,6 +128,19 @@ namespace loader
 
         private void label4_Click(object sender, EventArgs e)
         {
+
+        }
+
+        private void radioButton_grids_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton_grids.Checked)
+            {
+                checkBox1_use_hidded.Checked = false;
+            }
+            else
+            {
+                checkBox1_use_hidded.Checked = true;
+            }
 
         }
     }

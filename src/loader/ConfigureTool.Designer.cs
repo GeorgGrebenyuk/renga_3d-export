@@ -40,10 +40,10 @@ namespace loader
             this.checkBox_use_max_triangles = new System.Windows.Forms.CheckBox();
             this.checkBox1_use_hidded = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label3 = new System.Windows.Forms.Label();
@@ -98,6 +98,7 @@ namespace loader
             this.radioButton_grids.TabStop = true;
             this.radioButton_grids.Text = "Сетки с материалами";
             this.radioButton_grids.UseVisualStyleBackColor = true;
+            this.radioButton_grids.CheckedChanged += new System.EventHandler(this.radioButton_grids_CheckedChanged);
             // 
             // label2
             // 
@@ -162,26 +163,6 @@ namespace loader
             this.groupBox2.Text = "Формат экспорта";
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(286, 257);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Запуск";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 262);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(230, 13);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Нажмите для запуска процедуры экспорта:";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
-            // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
@@ -205,6 +186,26 @@ namespace loader
             this.radioButton1.Text = "В nwc (Autodesk Navisworks)";
             this.radioButton1.UseVisualStyleBackColor = true;
             this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(286, 257);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Запуск";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(16, 262);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(230, 13);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Нажмите для запуска процедуры экспорта:";
+            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // groupBox3
             // 
