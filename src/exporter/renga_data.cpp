@@ -6,18 +6,20 @@
 #include "general_data.hpp"
 #include "tools.hpp"
 #include <algorithm>
-
+#include <codecvt>
 #include <chrono>
 #include <fstream>
 renga_data::renga_data(Renga::IApplicationPtr application, export_configs configs)
 {
+	this->this_configs = configs;
 	renga_application = application;
 	Renga::IProjectPtr project = application->Project;
 	Renga::IDataExporterPtr data_exporter = project->DataExporter;
 	Renga::IMaterialManagerPtr material_manager = project->MaterialManager;
 
 	std::wstring current_project_path(project->FilePath, SysStringLen(project->FilePath));
-	std::string current_project_path_str(current_project_path.begin(), current_project_path.end());
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
+	std::string current_project_path_str = myconv.to_bytes(current_project_path);
 
 	std::string extension = "";
 	switch (configs.export_formats)
@@ -31,8 +33,10 @@ renga_data::renga_data(Renga::IApplicationPtr application, export_configs config
 	}
 
 	std::string renga_ext = ".rnp";
+	
 	current_project_path_str.replace(current_project_path_str.find(renga_ext), renga_ext.length(), extension);
-	std::wstring new_path(current_project_path_str.begin(), current_project_path_str.end());
+	std::wstring new_path = myconv.from_bytes(current_project_path_str);
+	//std::wstring new_path = current_project_path.replace(current_project_path.begin(), current_project_path.end(), renga_ext, extension);
 	this->project_path = new_path;
 
 	//Видимость

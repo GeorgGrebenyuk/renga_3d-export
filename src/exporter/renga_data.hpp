@@ -38,6 +38,7 @@ public:
 	std::map<const char *, std::vector<int>> non_levels_objects;
 	std::wstring project_path;
 	int info_triangles_count;
+	export_configs this_configs;
 private:
 	void start_sort_by_level_and_type(std::vector<int>* objects_ids);
 	//void get_properties(Renga::IModelObjectPtr model_object);

@@ -124,6 +124,13 @@ void navisworks::start() {
 	parse_level_objects((this->project_data->non_levels_objects), &non_levels_objects);
 	scene.AddNode(non_levels_objects);
 	
+
+	if (this->project_data->this_configs.use_recalc)
+	{
+		export_configs cf = this->project_data->this_configs;
+		LtNwcTransform tr = LiNwcTransformCreateRotTrans(0, 0, 0, cf.recalc_params[3]/180.0*3.14159265, cf.recalc_params[0], cf.recalc_params[1], cf.recalc_params[2]);
+		scene.ApplyTransform(tr);
+	}
 	int ii = 0;
 	scene.WriteCache(L"", wfilename, LI_NWC_NO_PROGRESS_CALLBACKS, LI_NWC_NO_USER_DATA);
 
