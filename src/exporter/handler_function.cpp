@@ -7,8 +7,8 @@
 #include <chrono>
 #include <sstream>
 
-int32_t run_exporter(bool use_hidden, int use_max_triangles,
-	bool recalc, int export_mode, int export_format) 
+int32_t run_exporter(bool input_use_hidden, int input_use_max_triangles,
+	bool input_recalc, int input_export_mode, int input_export_format)
 {
 	auto renga_app = Renga::CreateApplication();
 	if (renga_app)
@@ -16,16 +16,26 @@ int32_t run_exporter(bool use_hidden, int use_max_triangles,
 		//renga_app->Enabled = false;
 		//renga_app->UI->ShowMessageBox(Renga::MessageIcon_Info, "Сообщение", "Начата процедура экспорта");
 
-		if (use_max_triangles > 0) max_triangles = use_max_triangles;
-		use_recalc = recalc;
-		use_hidded = use_hidden;
-		export_formats = export_format;
+		export_configs parameters;
+		if (input_use_max_triangles > 0)
+		{
+			parameters.use_max_triangles = true;
+			parameters.maximum_triangles_count = input_use_max_triangles;
+		}
+		else 
+		{
+			parameters.use_max_triangles = false;
+		}
+		parameters.use_recalc = input_recalc;
+		parameters.use_hidded = input_use_hidden;
+		parameters.export_formats = input_export_format;
+		parameters.geometry_mode = input_export_mode;
 
 		std::chrono::system_clock::time_point info_start_time_record = std::chrono::system_clock::now();
-		renga_data project_info(renga_app, export_mode);
+		renga_data project_info(renga_app, parameters);
 		//run other classes for export needing data
 
-		if (export_format == 0) new navisworks(&project_info);
+		if (input_export_format == 0) new navisworks(&project_info);
 		//else if (export_format == 1) new fbx (&project_info);
 
 		std::chrono::system_clock::time_point info_time_end = std::chrono::system_clock::now();

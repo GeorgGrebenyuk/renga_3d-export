@@ -9,7 +9,7 @@
 
 #include <chrono>
 #include <fstream>
-renga_data::renga_data(Renga::IApplicationPtr application, int mode)
+renga_data::renga_data(Renga::IApplicationPtr application, export_configs configs)
 {
 	renga_application = application;
 	Renga::IProjectPtr project = application->Project;
@@ -20,7 +20,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 	std::string current_project_path_str(current_project_path.begin(), current_project_path.end());
 
 	std::string extension = "";
-	switch (export_formats)
+	switch (configs.export_formats)
 	{
 	case 0:
 		extension = ".nwc";
@@ -39,11 +39,11 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 	Renga::IModelViewPtr view_3d;
 	Renga::IViewPtr current_view = renga_application->ActiveView;
 	current_view->QueryInterface(&view_3d);
-	if (use_hidded == true && view_3d) use_hidded = true;
-	else use_hidded = false;
+	if (configs.use_hidded == true && view_3d) configs.use_hidded = true;
+	else configs.use_hidded = false;
 
-	this->start_sort_by_level_and_type();
-	if (mode == 0)
+	std::vector<int> objects_ids;
+	if (configs.geometry_mode == 0)
 	{
 		Renga::IGridWithMaterialCollectionPtr collection = data_exporter->GetGrids();
 		for (int objects_counter = 0; objects_counter < collection->Count; objects_counter++)
@@ -68,9 +68,9 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 		Renga::IModelObjectCollectionPtr model_objects_collection = project->Model->GetObjects();
 		Renga::IExportedObject3DCollectionPtr objects_3d_collection = data_exporter->GetObjects3D();
 
-		double time_querry = 0.0;
 		for (int counter_objects = 0; counter_objects < objects_3d_collection->Count; counter_objects++) 
 		{
+			int triangles_all_count = 0;
 			std::chrono::system_clock::time_point info_start_get_object = std::chrono::system_clock::now();
 			//create objects_3d_info definition
 			std::vector<bstr_t> material_names;
@@ -83,7 +83,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 			bstr_t object_name = model_object->GetName();
 			bstr_t object_internal_id = model_object->GetUniqueIdS();
 
-			if (use_hidded && view_3d->IsObjectVisible(model_object->Id))
+			if ((configs.use_hidded && view_3d->IsObjectVisible(model_object->Id)) | !configs.use_hidded)
 			{
 				Renga::Color color_object;
 				bstr_t material_name = "-";
@@ -98,7 +98,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 					color_object.Red = 128;
 					color_object.Green = 128;
 					color_object.Blue = 128;
-					color_object.Alpha = 255;
+					color_object.Alpha = 120;
 					bstr_t material_name = "Условный серый";
 				}
 				else this->get_material(model_object, &color_object, &material_name);
@@ -117,15 +117,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 					{
 						Renga::Color color_grid;
 						Renga::IGridPtr object_grid = object_mesh->GetGrid(counter_grids);
-						this->info_triangles_count += object_grid->TriangleCount;
-
-						//std::ofstream out;          // поток для записи
-						//out.open("E:\\Temp\\count_trs.txt", std::ios::app); // окрываем файл для записи
-						//if (out.is_open())
-						//{
-						//	out << this->info_triangles_count << std::endl;
-						//}
-						//out.close();
+						triangles_all_count += object_grid->TriangleCount;
 
 						if (obj_type == Renga::ObjectTypes::Window | obj_type == Renga::ObjectTypes::Door)
 						{
@@ -141,10 +133,17 @@ renga_data::renga_data(Renga::IApplicationPtr application, int mode)
 				object_3d_info object_data(material_names, material_colors, geometry);
 				object_data.object_name = object_name;
 				object_data.object_guid = object_internal_id;
-				this->objects_3d_info.insert(std::pair<int, object_3d_info>{object_3d_geometry->GetModelObjectId(), object_data});
+				if ((configs.use_max_triangles && triangles_all_count <= configs.maximum_triangles_count) | !configs.use_max_triangles)
+				{
+					objects_ids.push_back(model_object->Id);
+					this->info_triangles_count += triangles_all_count;
+					this->objects_3d_info.insert(std::pair<int, object_3d_info>{object_3d_geometry->GetModelObjectId(), object_data});
+				}
+				
 			}
 		}
 	}
+	this->start_sort_by_level_and_type(&objects_ids);
 }
 void renga_data::get_material(Renga::IModelObjectPtr model_object, Renga::Color* color, bstr_t* material_name)
 {
@@ -300,7 +299,7 @@ void renga_data::get_grids_color(GUID object_type, int grid_type, Renga::Color* 
 		}
 	}
 }
-void renga_data::start_sort_by_level_and_type()
+void renga_data::start_sort_by_level_and_type(std::vector<int> *objects_ids)
 {
 	Renga::IProjectPtr project = renga_application->Project;
 	Renga::IModelObjectCollectionPtr model_objects_collection = project->Model->GetObjects();
@@ -310,65 +309,67 @@ void renga_data::start_sort_by_level_and_type()
 	//std::map<GUID, std::vector<int>> non_levels_objects;
 
 	//Видимость
-	Renga::IModelViewPtr view_3d;
-	Renga::IViewPtr current_view = renga_application->ActiveView;
-	current_view->QueryInterface(&view_3d);
-	if (use_hidded == true && view_3d) use_hidded = true;
-	else use_hidded = false;
+	//Renga::IModelViewPtr view_3d;
+	//Renga::IViewPtr current_view = renga_application->ActiveView;
+	//current_view->QueryInterface(&view_3d);
+	//if (use_hidded == true && view_3d) use_hidded = true;
+	//else use_hidded = false;
 
-	//Учитываем только объекты модели, у которых можно достать геометрию (кроме уровней*)
-	std::vector<int> only_geometry_objects;
-	for (int counter_object3d = 0; counter_object3d < objects3d_collection->Count; counter_object3d++)
-	{
-		Renga::IExportedObject3DPtr obj = objects3d_collection->Get(counter_object3d);
-		if (view_3d->IsObjectVisible(obj->GetModelObjectId()))only_geometry_objects.push_back(obj->GetModelObjectId());
-		
-	}
+	////Учитываем только объекты модели, у которых можно достать геометрию (кроме уровней*)
+	//std::vector<int> only_geometry_objects;
+	//for (int counter_object3d = 0; counter_object3d < objects3d_collection->Count; counter_object3d++)
+	//{
+	//	Renga::IExportedObject3DPtr obj = objects3d_collection->Get(counter_object3d);
+	//	if (view_3d->IsObjectVisible(obj->GetModelObjectId()))only_geometry_objects.push_back(obj->GetModelObjectId());
+	//	
+	//}
 
 	std::vector<Renga::IModelObjectPtr> row_levels;
 	std::map<int, std::vector< Renga::IModelObjectPtr>>row_on_level_objects;
 	std::map<int, std::vector< Renga::IModelObjectPtr>>::iterator check_level_objects;
 
 	std::vector<Renga::IModelObjectPtr> row_non_level_objects;
-	for (int counter_objects = 0; counter_objects < model_objects_collection->Count; counter_objects++)
+	for (int obj_counter = 0; obj_counter < model_objects_collection->Count; obj_counter++)
 	{
-
-		Renga::IModelObjectPtr model_object = model_objects_collection->GetByIndex(counter_objects);
+		Renga::IModelObjectPtr model_object = model_objects_collection->GetByIndex(obj_counter);
 		GUID object_type = model_object->GetObjectType();
-		bool is_object_have_geometry = false;
-
-		if (std::find(only_geometry_objects.begin(), only_geometry_objects.end(), model_object->Id) != only_geometry_objects.end()) {
-			is_object_have_geometry = true;
-		}
-		else {
-			is_object_have_geometry = false;
-		}
-
 		if (object_type == Renga::ObjectTypes::Level)
 		{
 			Renga::ILevelPtr level;
 			model_object->QueryInterface(&level);
 			row_levels.push_back(model_object);
 		}
-		else if (is_object_have_geometry)
+	}
+	for (int counter_objects : (*objects_ids))
+	{
+		Renga::IModelObjectPtr model_object = model_objects_collection->GetById(counter_objects);
+		GUID object_type = model_object->GetObjectType();
+		//bool is_object_have_geometry = false;
+
+		//if (std::find(only_geometry_objects.begin(), only_geometry_objects.end(), model_object->Id) != only_geometry_objects.end()) {
+		//	is_object_have_geometry = true;
+		//}
+		//else {
+		//	is_object_have_geometry = false;
+		//}
+
+		
+		Renga::ILevelObjectPtr object_on_level;
+		model_object->QueryInterface(&object_on_level);
+		if (object_on_level)
 		{
-			Renga::ILevelObjectPtr object_on_level;
-			model_object->QueryInterface(&object_on_level);
-			if (object_on_level)
+			int level_id = object_on_level->GetLevelId();
+			check_level_objects = row_on_level_objects.find(level_id);
+			if (check_level_objects != row_on_level_objects.end())
 			{
-				int level_id = object_on_level->GetLevelId();
-				check_level_objects = row_on_level_objects.find(level_id);
-				if (check_level_objects != row_on_level_objects.end())
-				{
-					check_level_objects->second.push_back(model_object);
-				}
-				else row_on_level_objects.insert(
-					std::pair<int, std::vector<Renga::IModelObjectPtr>>{level_id, { model_object }});
+				check_level_objects->second.push_back(model_object);
 			}
-			else 
-			{
-				row_non_level_objects.push_back(model_object);
-			}
+			else row_on_level_objects.insert(
+				std::pair<int, std::vector<Renga::IModelObjectPtr>>{level_id, { model_object }});
+		}
+		else
+		{
+			row_non_level_objects.push_back(model_object);
 		}
 	}
 	//Сортируем уровни

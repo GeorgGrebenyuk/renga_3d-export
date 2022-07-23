@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "general_data.hpp"
 
 static Renga::IApplicationPtr renga_application;
 class object_3d_info {
@@ -30,7 +31,7 @@ public:
 class renga_data
 {
 public: 
-	renga_data(Renga::IApplicationPtr application, int mode);
+	renga_data(Renga::IApplicationPtr application, export_configs configs);
 	std::map<int, object_3d_info> objects_3d_info;
 	//Сортировка объектов по уровням и по типам (и также для объектов вне уровня)
 	std::map<Renga::ILevelPtr, std::map<const char*, std::vector<int>>> levels_objects;
@@ -38,7 +39,7 @@ public:
 	std::wstring project_path;
 	int info_triangles_count;
 private:
-	void start_sort_by_level_and_type();
+	void start_sort_by_level_and_type(std::vector<int>* objects_ids);
 	//void get_properties(Renga::IModelObjectPtr model_object);
 	//for materials and colors
 	void get_material(Renga::IModelObjectPtr model_object, Renga::Color* color, bstr_t* material_name);
