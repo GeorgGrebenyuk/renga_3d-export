@@ -1,11 +1,17 @@
 //variables
 #pragma once
 #include "Renga/ObjectTypes.h"
+struct export_configs {
+public:
+	bool use_max_triangles = false;
+	bool use_recalc = false;
+	bool use_hidded = true;
+	int export_formats = 0;
+	int geometry_mode = 0;
+	int maximum_triangles_count = 0;
+};
+//static int 
 
-static int max_triangles = 0;
-static bool use_recalc = false;
-static bool use_hidded = true;
-static int export_formats = 0;
 
 //static  = 0;
 
