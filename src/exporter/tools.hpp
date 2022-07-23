@@ -113,3 +113,11 @@ static void sort_objects(std::vector<Renga::IModelObjectPtr>*level_objects, std:
 		}
 	}
 }
+static std::vector <double> get_transformed_coords(double x, double y, double z, std::vector<double>  current_params)
+{
+	//std::vector<double> current_params = transform_parameters;
+	double new_x = current_params.at(0) + x * cos(current_params.at(3)) - y * sin(current_params.at(3));
+	double new_y = current_params.at(1) + x * sin(current_params.at(3)) + y * cos(current_params.at(3));
+	double new_z = current_params.at(2) + z;
+	return { new_x,new_y,new_z };
+}
