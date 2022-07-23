@@ -9,6 +9,7 @@ public:
 	int export_formats = 0;
 	int geometry_mode = 0;
 	int maximum_triangles_count = 0;
+	std::vector<double> recalc_params;
 };
 //static int 
 
