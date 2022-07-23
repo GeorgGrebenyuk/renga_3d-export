@@ -1,22 +1,48 @@
 #pragma once
 #include "pch.h"
-#include <cmath>
-static bool compare_levels(Renga::IModelObjectPtr l1, Renga::IModelObjectPtr l2) {
-
+//#include <cmath>
+static double get_height(Renga::IModelObjectPtr level_object)
+{
 	Renga::ILevelPtr pLevel1;
-	l1->QueryInterface(&pLevel1);
-	Renga::ILevelPtr pLevel2;
-	l2->QueryInterface(&pLevel2);
+	level_object->QueryInterface(&pLevel1);
+	return pLevel1->GetElevation();
+}
+static std::vector<Renga::IModelObjectPtr> compare_levels(std::vector<Renga::IModelObjectPtr> row_levels)
+{
+	//std::vector<Renga::IModelObjectPtr> new_vector = row_levels;
+	/*for (int i = 0; i < (row_levels).size() - 1; i++)
+	{
+		Renga::IModelObjectPtr o1 = (row_levels)[i];
+		Renga::ILevelPtr pLevel1;
+		o1->QueryInterface(&pLevel1);
+		double l1_h = pLevel1->GetElevation();
+		for (int j = i + 1;j < (row_levels).size(); j++)
+		{
+			Renga::IModelObjectPtr o2 = (row_levels)[j];
+			Renga::ILevelPtr pLevel2;
+			o2->QueryInterface(&pLevel2);
+			double l2_h = pLevel2->GetElevation();
 
-	assert(pLevel1 != nullptr);
-	assert(pLevel2 != nullptr);
-	double l1_h = round(pLevel1->GetElevation() * 1000) / 1000;
-	double l2_h = round(pLevel2->GetElevation() * 1000) / 1000;
-	bstr_t l1_name = pLevel1->LevelName;
-	bstr_t l2_name = pLevel2->LevelName;
-
-	if (l1_h == l2_h) return true;
-	else return l1_h <= l2_h;
+			if (l1_h <= l2_h)
+			{
+				(row_levels)[i] = o2;
+				(row_levels)[j] = o1;
+			}
+		}
+	}*/
+	for (int j = 1; j < (row_levels).size(); j++)
+	{
+		Renga::IModelObjectPtr object_1 = row_levels[j];
+		double key_1 = get_height(object_1);
+		int i = j - 1;
+		while (i > 0 && get_height(row_levels[i]) > key_1)
+		{
+			row_levels[i + 1] = row_levels[i];
+			i = i - 1;
+		}
+		row_levels[i + 1] = object_1;
+	}
+	return row_levels;
 }
 const char* get_type_as_str(GUID obj_type)
 {

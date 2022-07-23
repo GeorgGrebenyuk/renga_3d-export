@@ -1,10 +1,13 @@
 //variables
 #pragma once
 #include "Renga/ObjectTypes.h"
+
 static int max_triangles = 0;
 static bool use_recalc = false;
 static bool use_hidded = true;
 static int export_formats = 0;
+
+//static  = 0;
 
 //const std::list<GUID> c_levelTreeTypes =
 //{

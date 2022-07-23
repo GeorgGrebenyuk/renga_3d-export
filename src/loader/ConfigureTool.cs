@@ -20,6 +20,7 @@ namespace loader
             textBox_entering_max_triangles.Text = init_app.max_triangles_count.ToString();
 
             radioButton1.Checked = true;
+            checkBox_use_coords_recacl.Enabled = false;
         }
 
         private void checkBox1_use_hidded_CheckedChanged(object sender, EventArgs e)
