@@ -139,8 +139,8 @@
       <Command>xcopy "$(SDK_NWCREATE)\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)" /Y /I /E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>if not exist "$(SolutionDir)x64\$(Configuration)\nwcreate" mkdir "$(SolutionDir)x64\$(Configuration)\nwcreate"
-copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwcreate\nwcreate.manifest"</Command>
+      <Command>::if not exist "$(SolutionDir)x64\$(Configuration)\nwcreate" mkdir "$(SolutionDir)x64\$(Configuration)\nwcreate"
+::copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwcreate\nwcreate.manifest"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -168,8 +168,8 @@ copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwc
       <Command>xcopy "$(SDK_NWCREATE)\bin\x64\*.*" "$(SolutionDir)x64\$(Configuration)" /Y /I /E</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>if not exist "$(SolutionDir)x64\$(Configuration)\nwcreate" mkdir "$(SolutionDir)x64\$(Configuration)\nwcreate"
-copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwcreate\nwcreate.manifest"</Command>
+      <Command>::if not exist "$(SolutionDir)x64\$(Configuration)\nwcreate" mkdir "$(SolutionDir)x64\$(Configuration)\nwcreate"
+::copy /Y "$(ProjectDir)nwcreate.manifest" "$(SolutionDir)x64\$(Configuration)\nwcreate\nwcreate.manifest"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
