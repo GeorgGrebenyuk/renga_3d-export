@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "sstream"
+#include <cassert>
 
 static double getLevelElevation(Renga::IModelObjectPtr pModelObject)
 {
