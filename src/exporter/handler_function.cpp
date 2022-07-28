@@ -3,9 +3,12 @@
 #include "general_data.hpp"
 #include "Renga\CreateApplication.hpp"
 #include "renga_data.hpp"
-#include "navisworks.hpp"
+
 #include <chrono>
 #include <sstream>
+
+#include "navisworks.hpp"
+#include "fbx.hpp"
 
 void get_recalc_parameters(bool* need_using, std::vector<double>* parameters)
 {
@@ -85,7 +88,7 @@ int32_t run_exporter(bool input_use_hidden, int input_use_max_triangles,
 		//run other classes for export needing data
 
 		if (input_export_format == 0) new navisworks(&project_info);
-		//else if (export_format == 1) new fbx (&project_info);
+		else if (input_export_format == 1) new fbx(&project_info);
 
 		std::chrono::system_clock::time_point info_time_end = std::chrono::system_clock::now();
 		std::chrono::duration<double> elapsed_seconds = info_time_end - info_start_time_record;

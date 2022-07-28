@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using static loader.init_app;
+//using static loader.init_app;
 
 namespace loader
 {
@@ -21,6 +21,8 @@ namespace loader
 
             radioButton1.Checked = true;
             checkBox_use_coords_recacl.Enabled = false;
+            //radioButton_grids.Enabled = false;
+            radioButton_objects.Checked = true;
         }
 
         private void checkBox1_use_hidded_CheckedChanged(object sender, EventArgs e)
@@ -71,7 +73,10 @@ namespace loader
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
+            //if (radioButton2.Checked)
+            //{
 
+            //}
         }
 
         private void groupBox2_Enter(object sender, EventArgs e)
@@ -136,12 +141,15 @@ namespace loader
             if (radioButton_grids.Checked)
             {
                 checkBox1_use_hidded.Checked = false;
+                textBox_entering_max_triangles.Enabled = false;
+                checkBox_use_max_triangles.Checked = false;
             }
             else
             {
                 checkBox1_use_hidded.Checked = true;
+                checkBox_use_max_triangles.Checked = true;
+                textBox_entering_max_triangles.Enabled = true;
             }
-
         }
     }
 }

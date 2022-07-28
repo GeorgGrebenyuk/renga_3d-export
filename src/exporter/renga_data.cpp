@@ -50,21 +50,42 @@ renga_data::renga_data(Renga::IApplicationPtr application, export_configs config
 	if (configs.geometry_mode == 0)
 	{
 		Renga::IGridWithMaterialCollectionPtr collection = data_exporter->GetGrids();
+		int cnt = collection->Count;
 		for (int objects_counter = 0; objects_counter < collection->Count; objects_counter++)
 		{
 			Renga::IGridWithMaterialPtr grid2material = collection->Get(objects_counter);
 			Renga::IMaterialPtr material = grid2material->Material;
-			Renga::Color color_info = material->GetColor();
+			Renga::Color color_info;
+
+			std::vector<bstr_t> material_names;
+			if (material)
+			{
+				color_info = material->GetColor();
+				material_names = { material->Name };
+			}
+			else
+			{
+				color_info.Red = 0;
+				color_info.Green = 0;
+				color_info.Blue = 0;
+				color_info.Alpha = 255;
+				material_names = { "" };
+			}
 			Renga::IGridPtr grid = grid2material->Grid;
-			this->info_triangles_count += grid->TriangleCount;
+			
 
 			//create objects_3d_info definition
-			std::vector<bstr_t> material_names{ material->Name};
+			
 			std::vector<std::vector<unsigned short>> material_colors{ {color_info.Red, color_info.Green, color_info.Blue, color_info.Alpha} };
 			std::vector<Renga::IGridPtr> geometry{ grid };
 
-			object_3d_info object_data(material_names, material_colors, geometry);
-			this->objects_3d_info.insert(std::pair<int, object_3d_info>{objects_counter, object_data});
+			if ((configs.use_max_triangles && grid->TriangleCount <= configs.maximum_triangles_count) | !configs.use_max_triangles)
+			{
+				this->info_triangles_count += grid->TriangleCount;
+				object_3d_info object_data(material_names, material_colors, geometry);
+				this->objects_3d_info.insert(std::pair<int, object_3d_info>{objects_counter, object_data});
+			}
+
 		}
 	}
 	else 
@@ -155,8 +176,9 @@ renga_data::renga_data(Renga::IApplicationPtr application, export_configs config
 				
 			}
 		}
+		this->start_sort_by_level_and_type(&objects_ids);
 	}
-	this->start_sort_by_level_and_type(&objects_ids);
+	
 }
 void renga_data::get_material(Renga::IModelObjectPtr model_object, Renga::Color* color, bstr_t* material_name)
 {
