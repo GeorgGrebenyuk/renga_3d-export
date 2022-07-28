@@ -87,6 +87,12 @@ renga_data::renga_data(Renga::IApplicationPtr application, export_configs config
 			bstr_t object_name = model_object->GetName();
 			bstr_t object_internal_id = model_object->GetUniqueIdS();
 
+			std::map<bstr_t, bstr_t> properties;
+			std::map<bstr_t, bstr_t> quantities;
+			std::map<bstr_t, bstr_t> parameters;
+			this->get_props(model_object, &properties, &quantities, &parameters);
+
+
 			if ((configs.use_hidded && view_3d->IsObjectVisible(model_object->Id)) | !configs.use_hidded)
 			{
 				Renga::Color color_object;
@@ -115,7 +121,7 @@ renga_data::renga_data(Renga::IApplicationPtr application, export_configs config
 					{
 						this->get_layered_material(counter_meshes, model_object, &color_mesh, &material_name);
 					}
-					else color_mesh = color_object;
+					else  color_mesh = color_object;
 
 					for (int counter_grids = 0; counter_grids < object_mesh->GetGridCount(); counter_grids++)
 					{
@@ -137,6 +143,9 @@ renga_data::renga_data(Renga::IApplicationPtr application, export_configs config
 				object_3d_info object_data(material_names, material_colors, geometry);
 				object_data.object_name = object_name;
 				object_data.object_guid = object_internal_id;
+				object_data.parameters = parameters;
+				object_data.properties = properties;
+				object_data.quantities = quantities;
 				if ((configs.use_max_triangles && triangles_all_count <= configs.maximum_triangles_count) | !configs.use_max_triangles)
 				{
 					objects_ids.push_back(model_object->Id);
@@ -186,15 +195,18 @@ void renga_data::get_layered_material(int sub_object_position, Renga::IModelObje
 			Renga::ILayerCollectionPtr materials = some_materials->GetLayers();
 			Renga::ILayerPtr layer_material = materials->Get(sub_object_position);
 
-			Renga::IMaterialPtr material = renga_application->Project->MaterialManager->GetMaterial(layer_material->MaterialId);
-			if (material)
+			if (layer_material)
 			{
-				(*color) = material->GetColor();
-				(*material_name) = material->GetName();
+				Renga::IMaterialPtr material = renga_application->Project->MaterialManager->GetMaterial(layer_material->MaterialId);
+				if (material)
+				{
+					(*color) = material->GetColor();
+					(*material_name) = material->GetName();
+				}
 			}
 			else 
 			{
-				material = renga_application->Project->MaterialManager->GetMaterial(materials->Get(0)->MaterialId);
+				Renga::IMaterialPtr material = renga_application->Project->MaterialManager->GetMaterial(materials->Get(0)->MaterialId);
 				(*color) = material->GetColor();
 				(*material_name) = material->GetName();
 			}
@@ -328,7 +340,7 @@ void renga_data::start_sort_by_level_and_type(std::vector<int> *objects_ids)
 	//	
 	//}
 
-	std::vector<Renga::IModelObjectPtr> row_levels;
+	std::list <Renga::IModelObjectPtr> row_levels;
 	std::map<int, std::vector< Renga::IModelObjectPtr>>row_on_level_objects;
 	std::map<int, std::vector< Renga::IModelObjectPtr>>::iterator check_level_objects;
 
@@ -376,11 +388,13 @@ void renga_data::start_sort_by_level_and_type(std::vector<int> *objects_ids)
 			row_non_level_objects.push_back(model_object);
 		}
 	}
+	row_levels.sort(compareLevelElevations);
 	//Сортируем уровни
-	std::vector<Renga::IModelObjectPtr> sorted_levels = compare_levels(row_levels);
+	//compare_level2(&row_levels);
+	//std::vector<Renga::IModelObjectPtr> sorted_levels = compare_levels2(row_levels);
 	//Начинаем сортировку объектов по уровню
 
-	for (Renga::IModelObjectPtr one_level : sorted_levels)
+	for (Renga::IModelObjectPtr one_level : row_levels)
 	{
 		Renga::ILevelPtr level;
 		one_level->QueryInterface(&level);
@@ -393,4 +407,66 @@ void renga_data::start_sort_by_level_and_type(std::vector<int> *objects_ids)
 	}
 	//СОртировка по типу среди внеуровневых
 	sort_objects(&row_non_level_objects, &(this->non_levels_objects));
+}
+void renga_data::get_props(Renga::IModelObjectPtr model_object, 
+	std::map<bstr_t, bstr_t>* properties, std::map<bstr_t, bstr_t>* quantities, std::map<bstr_t, bstr_t>* parameters)
+{
+	//properties
+	Renga::IPropertyContainerPtr cont_props = model_object->GetProperties();
+	Renga::IGuidCollectionPtr props_ids = cont_props->GetIds();
+	for (int counter_id = 0; counter_id < props_ids->GetCount(); counter_id++)
+	{
+		Renga::IPropertyPtr prop = cont_props->Get(props_ids->Get(counter_id));
+		bstr_t name = prop->GetName();
+		bstr_t value;
+
+		name = prop->GetName();
+		std::stringstream ss;
+		if (prop->HasValue())
+		{
+			switch (prop->GetType())
+			{
+			case Renga::PropertyType::PropertyType_Angle:
+				ss << prop->GetAngleValue(Renga::AngleUnit::AngleUnit_Degrees);
+				break;
+			case Renga::PropertyType::PropertyType_Area:
+				ss << prop->GetAreaValue(Renga::AreaUnit::AreaUnit_Meters2);
+				break;
+			case Renga::PropertyType::PropertyType_Boolean:
+				ss << prop->GetBooleanValue();
+				break;
+			case Renga::PropertyType::PropertyType_Double:
+				ss << prop->GetDoubleValue();
+				break;
+			case Renga::PropertyType::PropertyType_Enumeration:
+				ss << prop->GetEnumerationValue();
+				break;
+			case Renga::PropertyType::PropertyType_Integer:
+				ss << prop->GetIntegerValue();
+				break;
+			case Renga::PropertyType::PropertyType_Length:
+				ss << prop->GetLengthValue(Renga::LengthUnit::LengthUnit_Meters);
+				break;
+			case Renga::PropertyType::PropertyType_Logical:
+				ss << prop->GetLogicalValue();
+				break;
+			case Renga::PropertyType::PropertyType_Mass:
+				ss << prop->GetMassValue(Renga::MassUnit::MassUnit_Kilograms);
+				break;
+			case Renga::PropertyType::PropertyType_String:
+				ss << prop->GetStringValue();
+				break;
+			case Renga::PropertyType::PropertyType_Volume:
+				ss << prop->GetVolumeValue(Renga::VolumeUnit::VolumeUnit_Meters3);
+				break;
+			default:
+				ss << "-";
+				break;
+			}
+			value = ss.str().c_str();
+		}
+		else value = "";
+		(*properties).insert(std::pair< bstr_t, bstr_t>{name, value});
+	}
+	//quantities
 }

@@ -10,6 +10,7 @@ public:
 private:
 	void parse_level_objects(std::map<const char*, std::vector<int>> data, LcNwcGroup* to_record);
 	void start();
+	void work_properties(std::map<bstr_t,bstr_t>*props, LcNwcGroup* to_record);
 	renga_data* project_data;
 };
 

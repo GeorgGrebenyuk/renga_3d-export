@@ -17,9 +17,10 @@ public:
 	std::vector<std::vector<unsigned short>> material_colors;
 	std::vector<Renga::IGridPtr> geometry;
 	//properties
-	/*
-	* if export for Grid2Material -- they are empty
-	*/
+	std::map<bstr_t, bstr_t> properties;
+	std::map<bstr_t, bstr_t> quantities;
+	std::map<bstr_t, bstr_t> parameters;
+
 	bstr_t object_name;
 	bstr_t object_guid;
 
@@ -47,6 +48,8 @@ private:
 	void get_layered_material(int sub_object_position, Renga::IModelObjectPtr model_object, Renga::Color* color, bstr_t* material_name);
 	void get_style(Renga::IModelObjectPtr model_object, Renga::Color* color);
 	void get_grids_color(GUID object_type, int grid_type, Renga::Color* color);
+	void get_props(Renga::IModelObjectPtr model_object, 
+		std::map<bstr_t, bstr_t>* properties, std::map<bstr_t, bstr_t>* quantities, std::map<bstr_t, bstr_t>* parameters);
 };
 
 

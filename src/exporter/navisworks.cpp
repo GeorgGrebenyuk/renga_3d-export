@@ -25,6 +25,18 @@ navisworks::navisworks(renga_data* data)
 		break;
 	}
 }
+void navisworks::work_properties(std::map<bstr_t, bstr_t>* props, LcNwcGroup* to_record)
+{
+	LcNwcPropertyAttribute internal_props;
+	internal_props.SetClassName(L"Renga_Properies", "Внутренние свойства");
+	for (auto one_prop : *props)
+	{
+		LcNwcData data;
+		data.SetWideString(one_prop.second);
+		internal_props.AddProperty(one_prop.first, one_prop.first, data);
+	}
+	to_record->AddAttribute(internal_props);
+}
 void navisworks::parse_level_objects(std::map<const char*, std::vector<int>> data, LcNwcGroup* to_record)
 {
 	//bool is_any_geometry_all = false;
@@ -54,6 +66,8 @@ void navisworks::parse_level_objects(std::map<const char*, std::vector<int>> dat
 			bstr_t object_name_str = info.object_name;
 			object_nwc.SetName(object_name_str);
 			object_nwc.SetLayer(TRUE);
+			//Properties
+			this->work_properties(&info.properties, &object_nwc);
 			//Geometry
 			for (int counter_sub_geometry = 0; counter_sub_geometry < info.geometry.size(); counter_sub_geometry++)
 			{
