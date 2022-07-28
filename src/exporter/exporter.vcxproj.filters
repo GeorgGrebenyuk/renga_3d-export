@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Export_formats">
+      <UniqueIdentifier>{5581b3f3-d974-41ab-a4c1-cb15a860cd98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -30,11 +33,17 @@
     <ClInclude Include="renga_data.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="navisworks.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="tools.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="navisworks.hpp">
+      <Filter>Export_formats</Filter>
+    </ClInclude>
+    <ClInclude Include="fbx.hpp">
+      <Filter>Export_formats</Filter>
+    </ClInclude>
+    <ClInclude Include="fbx_common.hpp">
+      <Filter>Export_formats</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -51,7 +60,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="navisworks.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Export_formats</Filter>
+    </ClCompile>
+    <ClCompile Include="fbx.cpp">
+      <Filter>Export_formats</Filter>
+    </ClCompile>
+    <ClCompile Include="fbx_common.cpp">
+      <Filter>Export_formats</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
