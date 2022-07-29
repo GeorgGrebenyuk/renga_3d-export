@@ -54,7 +54,8 @@ renga_data::renga_data(Renga::IApplicationPtr application, export_configs config
 		for (int objects_counter = 0; objects_counter < collection->Count; objects_counter++)
 		{
 			Renga::IGridWithMaterialPtr grid2material = collection->Get(objects_counter);
-			Renga::IMaterialPtr material = grid2material->Material;
+			Renga::IGridMaterialPtr grid_material = grid2material->Material;
+			Renga::IMaterialPtr material = material_manager->GetMaterial(grid_material->Id);
 			Renga::Color color_info;
 
 			std::vector<bstr_t> material_names;
