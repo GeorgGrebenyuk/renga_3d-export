@@ -13,6 +13,9 @@ fbx::fbx(renga_data* data)
 
 	// Prepare the FBX SDK.
 	InitializeSdkObjects(lSdkManager, lScene);
+	
+	//FbxSystemUnit SceneSystemUnit = lScene->GetGlobalSettings().GetSystemUnit();
+	//FbxSystemUnit::m.ConvertScene(lScene);
 
 	//lResult = CreateScene(lScene, lSampleFileName);
 	FbxNode* lRootNode = lScene->GetRootNode();
