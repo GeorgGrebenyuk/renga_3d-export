@@ -140,14 +140,14 @@ namespace loader
         {
             if (radioButton_grids.Checked)
             {
-                checkBox1_use_hidded.Checked = false;
+                checkBox1_use_hidded.Enabled = false;
                 textBox_entering_max_triangles.Enabled = false;
-                checkBox_use_max_triangles.Checked = false;
+                checkBox_use_max_triangles.Enabled = false;
             }
             else
             {
-                checkBox1_use_hidded.Checked = true;
-                checkBox_use_max_triangles.Checked = true;
+                checkBox1_use_hidded.Enabled = true;
+                checkBox_use_max_triangles.Enabled = true;
                 textBox_entering_max_triangles.Enabled = true;
             }
         }
