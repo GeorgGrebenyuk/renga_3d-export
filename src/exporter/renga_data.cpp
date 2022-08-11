@@ -203,7 +203,8 @@ void renga_data::get_material(Renga::IModelObjectPtr model_object, Renga::Color*
 
 	}
 }
-void renga_data::get_layered_material(int sub_object_position, Renga::IModelObjectPtr model_object, Renga::Color* color, bstr_t* material_name)
+void renga_data::get_layered_material(int sub_object_position, Renga::IModelObjectPtr model_object, 
+	Renga::Color* color, bstr_t* material_name)
 {
 	(*color).Red = 0;
 	(*color).Green = 0;
