@@ -2,6 +2,7 @@
 #include "fbx.hpp"
 #include "fbx_common.hpp"
 #include <codecvt>
+#include "tools.hpp"
 #define FBXSDK_VERSION_STRING 2019
 #define FBXSDK_VERSION_MINOR 0
 fbx::fbx(renga_data* data)
@@ -18,14 +19,19 @@ fbx::fbx(renga_data* data)
 	//FbxSystemUnit::m.ConvertScene(lScene);
 
 	//lResult = CreateScene(lScene, lSampleFileName);
+	std::map<std::vector<unsigned short>, FbxSurfacePhong*> color2materials;
+	std::map<std::vector<unsigned short>, FbxSurfacePhong*>::iterator check_objects;
 	FbxNode* lRootNode = lScene->GetRootNode();
 	for (auto obj_info : data->objects_3d_info)
 	{
 		object_3d_info info = obj_info.second;
 		FbxNode* fbx_object = FbxNode::Create(lSdkManager, "object_data");
 		fbx_object->SetVisibility(true);
-		//const char* name = info.object_name;
-		//fbx_object->SetName(name);
+		char* name = info.object_name;
+		char new_name[200] = { 0 };
+		Transliterate(name, &new_name[0]);
+		//bstr_t new_name = new_name;
+		fbx_object->SetName(new_name);
 
 		for (int counter_grids = 0; counter_grids < info.geometry.size(); counter_grids++)
 		{
@@ -55,18 +61,30 @@ fbx::fbx(renga_data* data)
 				fbx_grid_geometry->AddPolygon(tr.V2);
 				fbx_grid_geometry->EndPolygon();
 			}
-			fbx_grid_object->SetNodeAttribute(fbx_grid_geometry);
+			fbx_grid_object->SetNodeAttribute(fbx_grid_geometry);			
 
-			bstr_t material_name = info.material_names[counter_grids];
-			const char * material_name_str = material_name;
-			FbxString lMaterialName = material_name_str;
+			char* material_name = info.material_names[counter_grids];
+			char new_material_name[200] = { 0 };
+			Transliterate(material_name, &new_material_name[0]);
+			FbxString lMaterialName = new_material_name;
 
 			std::vector<unsigned short> material_color = info.material_colors[counter_grids];
-			FbxSurfacePhong* lMaterial = FbxSurfacePhong::Create(lSdkManager, lMaterialName.Buffer());
-			FbxDouble3 color_data(material_color[0]/255.0, material_color[1] / 255.0, material_color[2] / 255.0);
-			lMaterial->Diffuse.Set(color_data);
-			lMaterial->DiffuseFactor.Set(1.);
-			fbx_grid_object->AddMaterial(lMaterial);
+
+			check_objects = color2materials.find(material_color);
+			if (check_objects == color2materials.end())
+			{
+				FbxSurfacePhong* lMaterial = FbxSurfacePhong::Create(lSdkManager, lMaterialName.Buffer());
+				FbxDouble3 color_data(material_color[0] / 255.0, material_color[1] / 255.0, material_color[2] / 255.0);
+				lMaterial->Diffuse.Set(color_data);
+				lMaterial->DiffuseFactor.Set(1.);
+
+				color2materials.insert(std::pair<std::vector<unsigned short>, FbxSurfacePhong*>{material_color, lMaterial});
+				fbx_grid_object->AddMaterial(lMaterial);
+			}
+			else
+			{
+				fbx_grid_object->AddMaterial(check_objects->second);
+			}
 			fbx_object->AddChild(fbx_grid_object);
 
 		}
