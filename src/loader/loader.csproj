@@ -77,7 +77,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="renga_3d_export.rndesc" />
+    <None Include="renga_3d_export.rndesc">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Renga">
