@@ -1,7 +1,7 @@
 ﻿<RengaPlugin>
 	<Name>Плагин для экспорта 3D-вида в иные форматы</Name>
 	<!-- Displayed plugin name -->
-	<Version>1.0</Version>
+	<Version>3.3</Version>
 	<!-- Plugin version -->
 	<Copyright>GeorgGrebenyuk</Copyright>
 	<!-- Copyright information -->
