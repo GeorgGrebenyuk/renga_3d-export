@@ -43,6 +43,7 @@ void InitializeSdkObjects(FbxManager*& pManager, FbxScene*& pScene)
         FBXSDK_printf("Error: Unable to create FBX scene!\n");
         exit(1);
     }
+    FbxSystemUnit::m.ConvertScene(pScene);
 }
 
 void DestroySdkObjects(FbxManager* pManager, bool pExitStatus)
