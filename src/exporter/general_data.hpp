@@ -6,6 +6,7 @@ public:
 	bool use_max_triangles = false;
 	bool use_recalc = false;
 	bool use_hidded = true;
+	bool include_sub_geometry = true;
 	int export_formats = 0;
 	int geometry_mode = 0;
 	int maximum_triangles_count = 0;

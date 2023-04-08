@@ -28,16 +28,17 @@ namespace loader
         /// Какой формат был выбран для экспорта
         /// </summary>
         public static int export_format = 0;
+        public static bool include_sub_geometry = true;
         public class ExporterImport
         {
-            [DllImport("exporter", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "run_exporter")]
+            [DllImport("exporter.dll", CallingConvention = CallingConvention.StdCall, ExactSpelling = false, EntryPoint = "run_exporter")]
             private static extern int run_exporter(bool use_hidden, int use_max_triangles,
-    bool recalc, int export_mode, int export_format);
+    bool recalc, int export_mode, int export_format, bool include_sub_geometry);
 
             public int run_exporter_run(bool use_hidden, int use_max_triangles,
-    bool recalc, int export_mode, int export_format)
+    bool recalc, int export_mode, int export_format, bool include_sub_geometry)
             {
-                return run_exporter(use_hidden, use_max_triangles, recalc, export_mode, export_format);
+                return run_exporter(use_hidden, use_max_triangles, recalc, export_mode, export_format, include_sub_geometry);
             }
         }
         /// <summary>
@@ -68,7 +69,10 @@ namespace loader
                 ConfigureTool window = new ConfigureTool();
                 System.Windows.Forms.Application.Run(window);
                 window.Close();
-                int wait = new ExporterImport().run_exporter_run(use_hidded_objects, max_triangles_count, use_recalc_coordinates, export_mode, export_format);
+                renga_app.Enabled = false;
+                int wait = new ExporterImport().run_exporter_run(use_hidded_objects, max_triangles_count, 
+                    use_recalc_coordinates, export_mode, export_format, include_sub_geometry);
+                renga_app.Enabled = true;
                 int uu = 0;
             };
 

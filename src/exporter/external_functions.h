@@ -14,4 +14,4 @@
 /// <param name="export_format">0 = nwc, 1 = fbx</param>
 /// <returns></returns>
 extern "C" int32_t EXPORT_3D_FUNCTIONS_API __stdcall run_exporter(bool input_use_hidden, int input_use_max_triangles,
-	bool input_recalc, int input_export_mode, int input_export_format);
+	bool input_recalc, int input_export_mode, int input_export_format, bool include_sub_geometry);

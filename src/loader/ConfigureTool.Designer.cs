@@ -47,6 +47,7 @@ namespace loader
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label3 = new System.Windows.Forms.Label();
+            this.checkBox_turn_off_sub_geom = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -62,6 +63,7 @@ namespace loader
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBox_turn_off_sub_geom);
             this.groupBox1.Controls.Add(this.radioButton_objects);
             this.groupBox1.Controls.Add(this.radioButton_grids);
             this.groupBox1.Controls.Add(this.label2);
@@ -71,7 +73,7 @@ namespace loader
             this.groupBox1.Controls.Add(this.checkBox1_use_hidded);
             this.groupBox1.Location = new System.Drawing.Point(12, 13);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(367, 133);
+            this.groupBox1.Size = new System.Drawing.Size(367, 151);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Параметры выборки объектов:";
@@ -80,7 +82,7 @@ namespace loader
             // radioButton_objects
             // 
             this.radioButton_objects.AutoSize = true;
-            this.radioButton_objects.Location = new System.Drawing.Point(155, 101);
+            this.radioButton_objects.Location = new System.Drawing.Point(155, 128);
             this.radioButton_objects.Name = "radioButton_objects";
             this.radioButton_objects.Size = new System.Drawing.Size(194, 17);
             this.radioButton_objects.TabIndex = 8;
@@ -91,7 +93,7 @@ namespace loader
             // radioButton_grids
             // 
             this.radioButton_grids.AutoSize = true;
-            this.radioButton_grids.Location = new System.Drawing.Point(4, 101);
+            this.radioButton_grids.Location = new System.Drawing.Point(4, 128);
             this.radioButton_grids.Name = "radioButton_grids";
             this.radioButton_grids.Size = new System.Drawing.Size(136, 17);
             this.radioButton_grids.TabIndex = 7;
@@ -103,7 +105,7 @@ namespace loader
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 85);
+            this.label2.Location = new System.Drawing.Point(4, 112);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(198, 13);
             this.label2.TabIndex = 6;
@@ -155,7 +157,7 @@ namespace loader
             // 
             this.groupBox2.Controls.Add(this.radioButton2);
             this.groupBox2.Controls.Add(this.radioButton1);
-            this.groupBox2.Location = new System.Drawing.Point(11, 152);
+            this.groupBox2.Location = new System.Drawing.Point(12, 184);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(367, 67);
             this.groupBox2.TabIndex = 2;
@@ -240,6 +242,17 @@ namespace loader
             this.label3.Text = resources.GetString("label3.Text");
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
+            // checkBox_turn_off_sub_geom
+            // 
+            this.checkBox_turn_off_sub_geom.AutoSize = true;
+            this.checkBox_turn_off_sub_geom.Location = new System.Drawing.Point(6, 88);
+            this.checkBox_turn_off_sub_geom.Name = "checkBox_turn_off_sub_geom";
+            this.checkBox_turn_off_sub_geom.Size = new System.Drawing.Size(274, 17);
+            this.checkBox_turn_off_sub_geom.TabIndex = 9;
+            this.checkBox_turn_off_sub_geom.Text = "Представлять объект без вложенной геометрии";
+            this.checkBox_turn_off_sub_geom.UseVisualStyleBackColor = true;
+            this.checkBox_turn_off_sub_geom.CheckedChanged += new System.EventHandler(this.checkBox_turn_off_sub_geom_CheckedChanged);
+            // 
             // ConfigureTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -285,5 +298,6 @@ namespace loader
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox checkBox_turn_off_sub_geom;
     }
 }

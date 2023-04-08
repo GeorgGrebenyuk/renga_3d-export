@@ -4,8 +4,9 @@
 
 #define LI_NWC_NO_PROGRESS_CALLBACKS NULL
 #define LI_NWC_NO_USER_DATA NULL
-navisworks::navisworks(renga_data* data)
+navisworks::navisworks(renga_data* data, export_configs* configs)
 {
+	this->configs = configs;
 	this->project_data = data;
 	LiNwcApiErrorInitialise();
 	int status = 0;
@@ -62,10 +63,16 @@ void navisworks::parse_level_objects(std::map<const char*, std::vector<int>> dat
 			//is_any_geometry = true;
 			//is_any_geometry_all = true;
 			object_3d_info info = this->project_data->objects_3d_info[model_object_id];
+			
 			LcNwcGroup object_nwc;
 			bstr_t object_name_str = info.object_name;
 			object_nwc.SetName(object_name_str);
-			object_nwc.SetLayer(TRUE);
+			
+
+			//if (this->configs->include_sub_geometry == false) object_nwc.SetLayer(FALSE);
+			//else object_nwc.SetLayer(TRUE);
+
+			object_nwc.SetLayer(FALSE);
 			//Properties
 			this->work_properties(&info.properties, &object_nwc);
 			//Geometry
@@ -75,6 +82,7 @@ void navisworks::parse_level_objects(std::map<const char*, std::vector<int>> dat
 				std::vector<unsigned short> sub_color = info.material_colors[counter_sub_geometry];
 				bstr_t sub_material_name = info.material_names[counter_sub_geometry];
 
+				LcNwcGroup grid_data_object_nwc;
 				LcNwcGeometry grid_data;
 				grid_data.SetName(L"GRID");
 
@@ -104,7 +112,8 @@ void navisworks::parse_level_objects(std::map<const char*, std::vector<int>> dat
 					stream_grid_record.End();
 				}
 				grid_data.CloseStream(stream_grid_record);
-				object_nwc.AddNode(grid_data);
+				grid_data_object_nwc.AddNode(grid_data);
+				object_nwc.AddNode(grid_data_object_nwc);
 			}
 			object_type_group.AddNode(object_nwc);
 
@@ -142,10 +151,12 @@ void navisworks::start() {
 	if (this->project_data->this_configs.use_recalc)
 	{
 		export_configs cf = this->project_data->this_configs;
-		LtNwcTransform tr = LiNwcTransformCreateRotTrans(0, 0, 0, cf.recalc_params[3]/180.0*3.14159265, cf.recalc_params[0], cf.recalc_params[1], cf.recalc_params[2]);
+		LtNwcTransform tr = LiNwcTransformCreateRotTrans(0, 0, 0, cf.recalc_params[3]/180.0*3.14159265, 
+			cf.recalc_params[0], cf.recalc_params[1], cf.recalc_params[2]);
 		scene.ApplyTransform(tr);
 	}
 	int ii = 0;
+
 	scene.WriteCache(L"", wfilename, LI_NWC_NO_PROGRESS_CALLBACKS, LI_NWC_NO_USER_DATA);
 
 }

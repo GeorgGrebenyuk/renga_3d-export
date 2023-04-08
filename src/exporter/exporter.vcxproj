@@ -126,7 +126,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;%SDK_NWCREATE%\include;%SDK_FBX%\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%RENGA_SDK%\Cpp\Include;%RENGA_SDK%\tlb;%SDK_NWCREATE%\include;%SDK_FBX%\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -154,7 +154,7 @@ copy "$(SDK_FBX)\lib\vs2017\x64\debug\libfbxsdk.dll" "$(SolutionDir)x64\Debug\li
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>%RENGA_SDK%\C++\Include;%RENGA_SDK%\tlb;%SDK_NWCREATE%\include;%SDK_FBX%\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%RENGA_SDK%\Cpp\Include;%RENGA_SDK%\tlb;%SDK_NWCREATE%\include;%SDK_FBX%\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

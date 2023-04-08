@@ -42,7 +42,7 @@ void get_recalc_parameters(bool* need_using, std::vector<double>* parameters)
 	}
 }
 int32_t run_exporter(bool input_use_hidden, int input_use_max_triangles,
-	bool input_recalc, int input_export_mode, int input_export_format)
+	bool input_recalc, int input_export_mode, int input_export_format, bool include_sub_geometry)
 {
 	auto renga_app = Renga::CreateApplication();
 	if (renga_app)
@@ -78,6 +78,7 @@ int32_t run_exporter(bool input_use_hidden, int input_use_max_triangles,
 		{
 			parameters.use_recalc = false;
 		}
+		parameters.include_sub_geometry = include_sub_geometry;
 		parameters.use_recalc = input_recalc;
 		parameters.use_hidded = input_use_hidden;
 		parameters.export_formats = input_export_format;
@@ -87,7 +88,7 @@ int32_t run_exporter(bool input_use_hidden, int input_use_max_triangles,
 		renga_data project_info(renga_app, parameters);
 		//run other classes for export needing data
 
-		if (input_export_format == 0) new navisworks(&project_info);
+		if (input_export_format == 0) new navisworks(&project_info, &parameters);
 		else if (input_export_format == 1) new fbx(&project_info);
 
 		std::chrono::system_clock::time_point info_time_end = std::chrono::system_clock::now();

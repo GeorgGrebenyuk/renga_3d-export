@@ -118,8 +118,8 @@ namespace loader
                 if (Convert.ToInt32(textBox_entering_max_triangles.Text) >= 1) init_app.max_triangles_count = Convert.ToInt32(textBox_entering_max_triangles.Text);
                 else init_app.max_triangles_count = -1;
             }
-            
-            
+
+            if (checkBox_turn_off_sub_geom.Checked) init_app.include_sub_geometry = false;
 
             if (radioButton1.Checked) init_app.export_format = 0;
             else if (radioButton2.Checked) init_app.export_format = 1;
@@ -150,6 +150,11 @@ namespace loader
                 checkBox_use_max_triangles.Enabled = true;
                 textBox_entering_max_triangles.Enabled = true;
             }
+        }
+
+        private void checkBox_turn_off_sub_geom_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

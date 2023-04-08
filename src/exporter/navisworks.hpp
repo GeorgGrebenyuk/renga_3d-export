@@ -6,8 +6,9 @@
 class navisworks
 {
 public: 
-	navisworks(renga_data* data);
+	navisworks(renga_data* data, export_configs* configs);
 private:
+	export_configs* configs;
 	void parse_level_objects(std::map<const char*, std::vector<int>> data, LcNwcGroup* to_record);
 	void start();
 	void work_properties(std::map<bstr_t,bstr_t>*props, LcNwcGroup* to_record);
