@@ -30,7 +30,9 @@ fbx::fbx(renga_data* data)
 		fbx_object->SetVisibility(true);
 		char* name = info.object_name;
 		char new_name[200] = { 0 };
-		Transliterate(name, &new_name[0]);
+		bool ch1 = Transliterate(name, &new_name[0]);
+		if (!ch1) strcpy(new_name, "_unknown");
+
 		//bstr_t new_name = new_name;
 		fbx_object->SetName(new_name);
 
@@ -38,7 +40,7 @@ fbx::fbx(renga_data* data)
 		Создаем mesh'и по одинаковым материалам объекта
 		*/
 		std::vector<std::vector<unsigned short>> material_colors_was;
-		for (int counter_color = 0; counter_color< info.material_colors.size(); counter_color ++)
+		for (int counter_color = 0; counter_color < info.material_colors.size(); counter_color++)
 		{
 			std::vector<unsigned short> material_color_that = info.material_colors[counter_color];
 			bool that_color_exist = false;
@@ -61,7 +63,7 @@ fbx::fbx(renga_data* data)
 				{
 					Renga::IGridPtr renga_Grid = info.geometry[counter_grids];
 					if (info.material_colors[counter_grids] == material_color_that) contr_points_count += renga_Grid->GetVertexCount();
-					
+
 				}
 				fbx_object_geometry->InitControlPoints(contr_points_count);
 				FbxVector4* lControlPoints = fbx_object_geometry->GetControlPoints();
@@ -102,6 +104,7 @@ fbx::fbx(renga_data* data)
 			}
 		}
 		lRootNode->AddChild(fbx_object);
+		
 	}
 
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
@@ -118,7 +121,9 @@ void fbx::materials_work(object_3d_info* info, int counter, FbxNode* to_assign)
 {
 	char* material_name = (*info).material_names[counter];
 	char new_material_name[200] = { 0 };
-	Transliterate(material_name, &new_material_name[0]);
+	bool ch1 = Transliterate(material_name, &new_material_name[0]);
+	if (!ch1) strcpy(new_material_name, "_unknown");
+
 	FbxString lMaterialName = new_material_name;
 
 	std::vector<unsigned short> material_color = (*info).material_colors[counter];
@@ -137,4 +142,5 @@ void fbx::materials_work(object_3d_info* info, int counter, FbxNode* to_assign)
 	{
 		to_assign->AddMaterial(check_objects->second);
 	}
+	
 }

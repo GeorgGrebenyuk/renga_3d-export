@@ -6,9 +6,14 @@
 
 #include <chrono>
 #include <sstream>
+#include <fstream>
 
 #include "navisworks.hpp"
 #include "fbx.hpp"
+
+#include <locale>
+#include <codecvt>
+#include <string>
 
 void get_recalc_parameters(bool* need_using, std::vector<double>* parameters)
 {
@@ -98,9 +103,13 @@ int32_t run_exporter(bool input_use_hidden, int input_use_max_triangles,
 		output_data << "Экспорт окончен! \n";
 		output_data << "Число граней =  " << project_info.info_triangles_count << "\n";
 		output_data << "Время обработки =  " << elapsed_seconds.count() << " с.\n";
-		//bstr_t text_out = output_data.str().c_str();
+
+		//HWND app_info = (HWND)renga_app->GetMainWindowHandle();
+
+		//MessageBox(app_info, w_output_data.c_str(), L"Renga 3d export - log", MB_OK | MB_ICONQUESTION);
+
 		//renga_app->Enabled = true;
-		renga_app->UI->ShowMessageBox(Renga::MessageIcon_Info, "Сообщение", output_data.str().c_str());
+		//renga_app->UI->ShowMessageBox(Renga::MessageIcon_Info, "Сообщение", output_data.str().c_str());
 	}
 	else
 	{

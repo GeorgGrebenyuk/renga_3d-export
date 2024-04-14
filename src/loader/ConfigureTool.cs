@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,10 +74,10 @@ namespace loader
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            //if (radioButton2.Checked)
-            //{
-
-            //}
+            if (radioButton2.Checked)
+            {
+                radioButton_objects.Checked = true;
+            }
         }
 
         private void groupBox2_Enter(object sender, EventArgs e)
@@ -106,7 +107,9 @@ namespace loader
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             //Считывание предустановленных параметров
             if (checkBox1_use_hidded.Checked) init_app.use_hidded_objects = true;
             else init_app.use_hidded_objects = false;
@@ -126,6 +129,18 @@ namespace loader
 
             if (radioButton_grids.Checked) init_app.export_mode = 0;
             else if (radioButton_objects.Checked) init_app.export_mode = 1;
+
+            //string log_path = "C:\\renga_3d_export_log.txt";
+            //if (File.Exists(log_path))
+            //{
+            //    string file_log = File.ReadAllText(log_path);
+            //    File.Delete(log_path);
+            //    MessageBox.Show(file_log);
+            //}
+
+            timer.Stop();
+            string message = $"Экспорт окончен! \n Время обработки = " + timer.Elapsed.TotalSeconds.ToString() + " сек.";
+            MessageBox.Show(message);
 
             this.Close();
             //return to init_app class
